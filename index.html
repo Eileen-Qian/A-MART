@@ -154,19 +154,16 @@
                     <div class="tab-pane fade show active" id="nav-transactionDetails" role="tabpanel"
                         aria-labelledby="nav-transactionDetails-tab">
                         <div class="d-flex mb-2 align-items-center">
-                            {{searchTransactionDetailsDate}}
-                            <input type="date" class="pe-3 me-2" v-model="searchTransactionDetailsDate">
-                            <button type="submit" class="btn btn-success me-2"
-                                @click="search(searchTransactionDetailsDate)">
+                            <input type="date" class="pe-3 me-2" v-model="searchTransactionDetailsData.Time">
+                            <input type="checkbox" name="isElectric" id="isElectric" checked class="me-2"
+                                v-model="searchTransactionDetailsData.isElectric">電動車
+                            <button type="submit" class="btn btn-success ml-3"
+                                @click="searchTransactionDetails(searchTransactionDetailsData)">
                                 搜尋
                             </button>
-                            <input type="checkbox" name="isElectric" id="isElectric" checked class="me-2"
-                                v-model="isElectric">電動車
-
                             <button type="button" class="btn btn-outline-success mb-1 ml-auto"
                                 @click="transactionDetailstoExcel('xlsx')">匯出報表</button>
                         </div>
-
                         <div class="table-responsive" id="transactionDetailsTable">
                             <table class="table table-hover table-bordered text-center fs-5">
                                 <thead>
@@ -187,19 +184,28 @@
                                         <td class="align-middle">{{ transactionDetail.plate }}</td>
                                         <td class="align-middle">{{ transactionDetail.priceClass }}</td>
                                         <td class="align-middle">{{ transactionDetail.carType }}</td>
-                                        <td class="align-middle">{{ transactionDetail.isElectric ? '是' : '否' }}</td>
-                                        <td class="align-middle">{{ transactionDetail.enterTime }}</td>
+                                        <td class="align-middle">{{ transactionDetail.ELECTRIC==1 ? '是' : '否'}}</td>
+                                        <td class="align-middle">{{ transactionDetail.ENTERTIME }}</td>
                                         <td class="align-middle">{{ transactionDetail.transTime }}</td>
-                                        <td class="align-middle">{{ transactionDetail.stay }}</td>
-                                        <td class="align-middle">{{ transactionDetail.payAmount }}</td>
+                                        <td class="align-middle">{{ Math.round(transactionDetail.STAY*60) }}</td>
+                                        <td class="align-middle">{{ transactionDetail.amount }}</td>
                                         <td class="align-middle">
-                                            <ul><li v-for="discount in transactionDetail.discounts">{{ discount.serialNumber }}</li></ul>
+                                            <ul>
+                                                <li v-for="discount in transactionDetail.discounts">{{
+                                                    discount.serialNumber }}</li>
+                                            </ul>
                                         </td>
                                         <td class="align-middle">
-                                            <ul><li v-for="discount in transactionDetail.discounts">{{ discount.expense }}</li></ul>
+                                            <ul>
+                                                <li v-for="discount in transactionDetail.discounts">{{ discount.expense
+                                                    }}</li>
+                                            </ul>
                                         </td>
                                         <td class="align-middle">
-                                            <ul><li v-for="discount in transactionDetail.discounts">{{ discount.hours }}</li></ul>
+                                            <ul>
+                                                <li v-for="discount in transactionDetail.discounts">{{ discount.hours }}
+                                                </li>
+                                            </ul>
                                         </td>
                                     </tr>
                                 </tbody>
@@ -248,6 +254,10 @@
                             </table>
                         </div>
                     </div>
+                    <!-- 查無資料 -->
+                    <div class="cantFind-Area">
+                        <h3 class="text-center h3">目前無資料</h3>
+                    </div>
                 </div>
             </div>
         </div>
@@ -258,7 +268,11 @@
         integrity="sha384-/bQdsTh/da6pkI1MST/rWKFNjaCP5gBSY4sEBT38Q/9RBh9AH40zEOg7Hlq2THRZ"
         crossorigin="anonymous"></script>
     <script src="https://unpkg.com/vue@latest"></script>
+    <!-- 匯出 excel -->
     <script type="text/javascript" src="https://unpkg.com/xlsx@0.15.1/dist/xlsx.full.min.js"></script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/axios/0.9.1/axios.min.js'
+        integrity='sha512-Xk3wWei2TGrsh9kDSBKUMIjw/86sLUvhtnv9f7fOuIwhhiUTKz8szkWkzHthrM5Bb3Bu9idSzkxOrkzhcneuiw=='
+        crossorigin='anonymous'></script>
     <script type="module" src="./js/all.js"></script>
 </body>
 
