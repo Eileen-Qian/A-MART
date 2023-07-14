@@ -1,10 +1,14 @@
 import { createApp } from 'https://unpkg.com/vue@3/dist/vue.esm-browser.js';
 
 const Api = 'https://8060-114-36-43-252.ngrok-free.app';
+const cantFindArea = document.querySelector('.cantFind-Area-transactionDetails');
 
 const app = Vue.createApp({
     data() {
         return {
+            // 即時現況
+            todayAllData: [],
+            todayElectric: [],
             // 時段流量
             searchFlowDateFrom: '',
             searchFlowDateTo: '',
@@ -45,9 +49,35 @@ const app = Vue.createApp({
                 "isElectric": true,
                 "Time": ''
             },
+            // 消費折抵
+            whos: [], // 商家
+            // 搜尋商家消費折抵
+            searchDiscountsData: {
+                who: ''
+            },
+            discounts: [] // 消費折抵 list
         }
     },
     methods: {
+        // 即時現況
+        // 即時現況 - 取本日全部車輛
+        getTodayAll(){
+            const getTodayAllApi = `${Api}/today/all`;
+            axios
+            .get(getTodayAllApi)
+            .then((response) => {
+                this.todayAllData = response.data;
+            })
+        },
+        // 即時現況 - 取本日電動車 
+        getTodayElectric(){
+            const getTodayElectricApi = `${Api}/today/electric`;
+            axios
+            .get(getTodayElectricApi)
+            .then((response) => {
+                this.todayElectric = response.data
+            })
+        },
         searchFlow(searchFlowDateFrom, searchFlowDateTo) {
             alert("尚未有資料")
         },
@@ -102,12 +132,46 @@ const app = Vue.createApp({
             return dl ?
                 XLSX.write(wb, { bookType: type, bookSST: true, type: 'base64' }) :
                 XLSX.writeFile(wb, fn || ('統計報表.' + (type || 'xlsx')));
+        },ransactionStatistics(){
+            console.log('searchTransactionStatistics');
+        },
+        // 消費折抵
+        // 商家 list
+        getWhos() {
+            const getWhosApi = `${Api}/who`;
+            axios
+                .get(getWhosApi)
+                .then((response) => {
+                    this.whos = response.data;
+                })
+        },
+        // 消費折抵 list
+        getDiscounts() {
+            const getDiscountsApi = `${Api}/discount`;
+            const discountStore = document.getElementById('discountStore');
+            discountStore.addEventListener('change', handleChangeWho);
+            function handleChangeWho() {
+                this.searchDiscountsData =  discountStore.value;
+                axios
+                .post(getDiscountsApi, { target: {who:this.searchDiscountsData} })
+                .then((respponse) => {
+                    this.discounts = respponse.data;
+                    console.log('discounts',this.discounts);
+                    console.log('discounts.length',this.discounts.length);
+                })
+            }
         }
     },
     mounted() {
         // 交易明細 - 當天為電動車的資料
         this.isToday()
-        this.checkIsElectric()
+        this.checkIsElectric();
+        // 消費折抵 - 商家列表
+        this.getWhos();
+        this.getDiscounts();
+        // 即時現況
+        setInterval(this.getTodayAll(), 1800000);
+        setInterval(this.getTodayElectric(), 1800000);
     }
 })
 

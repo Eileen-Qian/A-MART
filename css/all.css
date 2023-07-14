@@ -110,7 +110,7 @@ section {
 }
 
 body {
-	line-height: 1;
+	line-height: 1.5;
 }
 
 ol,
@@ -142,13 +142,41 @@ table {
 	margin-left: auto;
 }
 
+
 /* 無搜尋結果 */
-.cantFind-Area {
+.cantFind-Area
+{
 	display: none;
-	margin-top: 70px;
+	margin-top: 30px;
 	text-align: center;
 }
 
 .block {
 	display: block;
+}
+
+/* 即時現況 */
+.instant{
+	display: flex;
+	justify-content: space-between;
+}
+.instant li{
+	border: 1px  solid #DEDEDE;
+	border-radius: 5px;
+	width: 25%;
+	margin-right: 10px;
+	font-size: 8px;
+	color: gray;
+	padding: 5px;
+	cursor: default;
+}
+
+.parkRatio{
+	border: 1px  solid #DEDEDE;
+	border-radius: 5px;
+	margin-right: 10px;
+	font-size: 8px;
+	color: gray;
+	padding: 5px;
+	cursor: default;
 }

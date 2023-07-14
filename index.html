@@ -21,12 +21,13 @@
             <div class="header my-3">
                 <nav>
                     <div class="nav nav-tabs" id="nav-tab" role="tablist">
-                        <button class="nav-link" id="nav-instant-tab" data-bs-toggle="tab" data-bs-target="#nav-instant"
-                            type="button" role="tab" aria-controls="nav-instant" aria-selected="true">即時現況</button>
+                        <button class="nav-link active" id="nav-instant-tab" data-bs-toggle="tab"
+                            data-bs-target="#nav-instant" type="button" role="tab" aria-controls="nav-instant"
+                            aria-selected="true">即時現況</button>
                         <button class="nav-link" id="nav-vehicleFlowrate-tab" data-bs-toggle="tab"
                             data-bs-target="#nav-vehicleFlowrate" type="button" role="tab"
                             aria-controls="nav-vehicleFlowrate" aria-selected="false">時段流量</button>
-                        <button class="nav-link active" id="nav-transactionDetails-tab" data-bs-toggle="tab"
+                        <button class="nav-link" id="nav-transactionDetails-tab" data-bs-toggle="tab"
                             data-bs-target="#nav-transactionDetails" type="button" role="tab"
                             aria-controls="nav-transactionDetails" aria-selected="false">交易明細</button>
                         <button class="nav-link" id="nav-statistics-tab" data-bs-toggle="tab"
@@ -42,8 +43,53 @@
             <div class="content">
                 <div class="tab-content" id="nav-tabContent">
                     <!-- 即時現況 -->
-                    <div class="tab-pane fade" id="nav-instant" role="tabpanel" aria-labelledby="nav-instant-tab">
-                        即時現況頁面建置中...
+                    <div class="tab-pane fade show active" id="nav-instant" role="tabpanel"
+                        aria-labelledby="nav-instant-tab">
+                        <div class="row">
+                            <div class="col-6">
+                                <h4 class="mb-3">本日全部車輛</h4>
+                                <ul class="instant">
+                                    <li>累積進出<br>
+                                        <span class="fs-4 text-dark">{{todayAllData.total}}</span>
+                                    </li>
+                                    <li>累積進場<br>
+                                        <span class="fs-4 text-dark">{{todayAllData.countInCar}}</span>
+                                    </li>
+                                    <li>累積出場<br>
+                                        <span class="fs-4 text-dark">{{todayAllData.countOutCar}}</span>
+                                    </li>
+                                    <li>未出場<br>
+                                        <span class="fs-4 text-dark">{{todayAllData.subtract}}</span>
+                                    </li>
+                                </ul>
+                                <div class="parkRatio mt-5">
+                                    <p>總停車率</p>
+                                    <p class="fs-4 text-dark">7%</p>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <h4 class="mb-3">本日電動車</h4>
+                                <ul class="instant">
+                                    <li>累積進出<br>
+                                        <span class="fs-4 text-dark">{{todayElectric.total}}</span>
+                                    </li>
+                                    <li>累積進場<br>
+                                        <span class="fs-4 text-dark">{{todayElectric.countInCar}}</span>
+                                    </li>
+                                    <li>累積出場<br>
+                                        <span class="fs-4 text-dark">{{todayElectric.countOutCar}}</span>
+                                    </li>
+                                    <li>未出場<br>
+                                        <span class="fs-4 text-dark">{{todayElectric.subtract}}</span>
+                                    </li>
+                                </ul>
+                                <div class="parkRatio mt-5">
+                                    <p>電動車停車率</p>
+                                    <p class="fs-4 text-dark">3%</p>
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
                     <!-- 時段流量 -->
                     <div class="tab-pane fade" id="nav-vehicleFlowrate" role="tabpanel"
@@ -151,7 +197,7 @@
                         </div>
                     </div>
                     <!-- 交易明細 -->
-                    <div class="tab-pane fade show active" id="nav-transactionDetails" role="tabpanel"
+                    <div class="tab-pane fade" id="nav-transactionDetails" role="tabpanel"
                         aria-labelledby="nav-transactionDetails-tab">
                         <div class="d-flex mb-2 align-items-center">
                             <input type="date" class="pe-3 me-2" v-model="searchTransactionDetailsData.Time">
@@ -211,6 +257,10 @@
                                 </tbody>
                             </table>
                         </div>
+                        <!-- 查無資料 -->
+                        <div class="cantFind-Area">
+                            <h3 class="text-center h3">目前無資料</h3>
+                        </div>
                     </div>
                     <!-- 交易統計 -->
                     <div class="tab-pane fade" id="nav-statistics" role="tabpanel" aria-labelledby="nav-statistics-tab">
@@ -218,11 +268,11 @@
                     </div>
                     <!-- 消費折抵 -->
                     <div class="tab-pane fade" id="nav-discount" role="tabpanel" aria-labelledby="nav-discount-tab">
-                        <select name="discountStore" id="discountStore" class="mb-3">
-                            <option value="愛買">愛買</option>
-                            <option value="吉野家">吉野家</option>
-                            <option value="三商巧福">三商巧福</option>
+                        <select name="discountStore" id="discountStore" class="mb-3" v-model="searchDiscountsData">
+                            <option v-for="who in  whos">{{who.who}}</option>
                         </select>
+                        {{searchDiscountsData}}
+                        {{discounts}}
                         <div class="table-responsive" id="discountTable">
                             <table class="table table-hover table-bordered text-center">
                                 <thead>
@@ -234,30 +284,19 @@
                                     <th>折抵時數</th>
                                 </thead>
                                 <tbody>
-                                    <tr>
-                                        <td>7/1</td>
-                                        <td>愛買</td>
-                                        <td>100</td>
-                                        <td>100</td>
-                                        <td>3000</td>
-                                        <td>50</td>
-                                    </tr>
-                                    <tr>
-                                        <td>7/1</td>
-                                        <td>吉野家</td>
-                                        <td>50</td>
-                                        <td>50</td>
-                                        <td>1500</td>
-                                        <td>15</td>
+                                    <tr v-for="discount in discounts">
+                                        <td>{{ discount }}</td>
+                                        <td>{{ discount.who }}</td>
+                                        <td>{{ discount.countLaneRecordId }}</td>
+                                        <td>{{ discount.countCoupon }}</td>
+                                        <td>{{ discount.totalExpense }}</td>
+                                        <td>{{ discount.totalHours }}</td>
                                     </tr>
                                 </tbody>
                             </table>
                         </div>
                     </div>
-                    <!-- 查無資料 -->
-                    <div class="cantFind-Area">
-                        <h3 class="text-center h3">目前無資料</h3>
-                    </div>
+
                 </div>
             </div>
         </div>
