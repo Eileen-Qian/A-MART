@@ -1,7 +1,9 @@
 import { createApp } from 'https://unpkg.com/vue@3/dist/vue.esm-browser.js';
 
-const Api = 'https://8060-114-36-43-252.ngrok-free.app';
-const cantFindArea = document.querySelector('.cantFind-Area-transactionDetails');
+const Api = 'https://3c9e-119-77-141-185.ngrok-free.app';
+const flowDateTable = document.querySelector('.flowDateTable');
+const flowMonthTable = document.querySelector('.flowMonthTable');
+let array = [];
 
 const app = Vue.createApp({
     data() {
@@ -10,9 +12,10 @@ const app = Vue.createApp({
             todayAllData: [],
             todayElectric: [],
             // 時段流量
-            searchFlowDateFrom: '',
-            searchFlowDateTo: '',
-            searchFlowDate: '',
+            flowData: [],
+            organizedFlowData: {},
+            searchFlowMonthData: '', // 按月搜尋時段流量
+            searchFlowDateData: '', // 按日搜尋時段流量
             // 交易明細
             today: '',
             transactionDetails: [
@@ -49,6 +52,14 @@ const app = Vue.createApp({
                 "isElectric": true,
                 "Time": ''
             },
+            // 交易統計
+            transactionStatisticsAll: [],
+            // 搜尋交易統計
+            searchTransactionStatisticsData: {
+                isElectric: true,
+                startTime: "",
+                endTime: ""
+            },
             // 消費折抵
             whos: [], // 商家
             // 搜尋商家消費折抵
@@ -61,25 +72,67 @@ const app = Vue.createApp({
     methods: {
         // 即時現況
         // 即時現況 - 取本日全部車輛
-        getTodayAll(){
+        getTodayAll() {
             const getTodayAllApi = `${Api}/today/all`;
             axios
-            .get(getTodayAllApi)
-            .then((response) => {
-                this.todayAllData = response.data;
-            })
+                .get(getTodayAllApi)
+                .then((response) => {
+                    this.todayAllData = response.data;
+                })
         },
         // 即時現況 - 取本日電動車 
-        getTodayElectric(){
+        getTodayElectric() {
             const getTodayElectricApi = `${Api}/today/electric`;
             axios
-            .get(getTodayElectricApi)
-            .then((response) => {
-                this.todayElectric = response.data
-            })
+                .get(getTodayElectricApi)
+                .then((response) => {
+                    this.todayElectric = response.data
+                })
         },
-        searchFlow(searchFlowDateFrom, searchFlowDateTo) {
-            alert("尚未有資料")
+        // 時段流量
+        // 時段流量 - 按月搜尋
+        searchFlowMonth(searchFlowMonth) {
+            const searchFlowMonthApi = `${Api}/flow`;
+            axios
+                .post(searchFlowMonthApi, { target: { Time: this.searchFlowMonthData } })
+                .then((response) => {
+                    this.flowData = response.data.flow;
+                    // console.log(response.data.flow);
+                    const proxyArray = new Proxy((response.data.flow), {
+                        get(target, key) {
+                            // console.log('Getting property:', key);
+                            return Reflect.get(target, key);
+                        }
+                    })
+                    array = Array.from(proxyArray);
+                    // array.forEach(item => {
+                    //     console.log(item);
+                    // });
+
+                    // 以日期為單位整理資料
+                    function convertProxyToArray(array) {
+                        if (Array.isArray(array)) {
+                            // 如果傳入的本身就是數組，則返回該數組本身
+                            return array;
+                            console.log(array);
+                        }
+                        for (const key in array) {
+                            if (array.hasOwnProperty(key)) {
+                                this.organizedFlowData.push(array[key]);
+                            }
+                            this.organizedFlowData = array;
+                            return this.organizedFlowData;
+                            console.log(array);
+                        }
+                        console.log(this.organizedFlowData);
+                        console.log(array);
+                    }
+                    convertProxyToArray(array);
+                })
+            flowDateTable.classList.remove('block');
+            flowMonthTable.classList.add('block');
+            // console.log('flowDateTable',flowDateTable.classList);
+            // console.log('flowMonthTable',flowMonthTable.classList);
         },
         // 交易明細
         // 交易明細 - 當天為電動車的資料
@@ -131,9 +184,29 @@ const app = Vue.createApp({
             var wb = XLSX.utils.table_to_book(elt, { sheet: "sheet1" });
             return dl ?
                 XLSX.write(wb, { bookType: type, bookSST: true, type: 'base64' }) :
-                XLSX.writeFile(wb, fn || ('統計報表.' + (type || 'xlsx')));
-        },ransactionStatistics(){
-            console.log('searchTransactionStatistics');
+                XLSX.writeFile(wb, fn || ('交易明細報表.' + (type || 'xlsx')));
+        },
+        // 交易統計 - 搜尋
+        searchTransactionStatistic(searchTransactionStatisticsData) {
+            const searchTransactionStatisticApi = `${Api}/statistic`;
+            const cantFindArea1 = document.querySelector('.cantFind-Area-transactionStatisticsAll');
+            axios
+                .post(searchTransactionStatisticApi, { target: this.searchTransactionStatisticsData })
+                .then((response) => {
+                    // console.log(response.data);
+                    this.transactionStatisticsAll = response.data;
+                    this.transactionStatisticsAll.length > 0
+                        ? cantFindArea1.classList.remove('block')
+                        : cantFindArea1.classList.add('block');
+                })
+        },
+        // 交易統計 - 匯出報表
+        transactionStatisticTabletoExcel(type, fn, dl) {
+            var elt = document.getElementById('transactionStatisticTable');
+            var wb = XLSX.utils.table_to_book(elt, { sheet: "sheet1" });
+            return dl ?
+                XLSX.write(wb, { bookType: type, bookSST: true, type: 'base64' }) :
+                XLSX.writeFile(wb, fn || ('交易統計報表.' + (type || 'xlsx')));
         },
         // 消費折抵
         // 商家 list
@@ -146,29 +219,29 @@ const app = Vue.createApp({
                 })
         },
         // 消費折抵 list
-        getDiscounts() {
-            const getDiscountsApi = `${Api}/discount`;
-            const discountStore = document.getElementById('discountStore');
-            discountStore.addEventListener('change', handleChangeWho);
-            function handleChangeWho() {
-                this.searchDiscountsData =  discountStore.value;
-                axios
-                .post(getDiscountsApi, { target: {who:this.searchDiscountsData} })
-                .then((respponse) => {
-                    this.discounts = respponse.data;
-                    console.log('discounts',this.discounts);
-                    console.log('discounts.length',this.discounts.length);
-                })
-            }
-        }
+        // getDiscounts() {
+        //     const getDiscountsApi = `${Api}/discount`;
+        //     const discountStore = document.getElementById('discountStore');
+        //     discountStore.addEventListener('change', handleChangeWho);
+        //     function handleChangeWho() {
+        //         this.searchDiscountsData = discountStore.value;
+        //         axios
+        //             .post(getDiscountsApi, { target: { who: this.searchDiscountsData } })
+        //             .then((respponse) => {
+        //                 this.discounts = respponse.data;
+        //                 console.log('discounts', this.discounts);
+        //                 console.log('discounts.length', this.discounts.length);
+        //             })
+        //     }
+        // }
     },
     mounted() {
         // 交易明細 - 當天為電動車的資料
         this.isToday()
         this.checkIsElectric();
         // 消費折抵 - 商家列表
-        this.getWhos();
-        this.getDiscounts();
+        // this.getWhos();
+        // this.getDiscounts();
         // 即時現況
         setInterval(this.getTodayAll(), 1800000);
         setInterval(this.getTodayElectric(), 1800000);

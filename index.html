@@ -33,9 +33,9 @@
                         <button class="nav-link" id="nav-statistics-tab" data-bs-toggle="tab"
                             data-bs-target="#nav-statistics" type="button" role="tab" aria-controls="nav-statistics"
                             aria-selected="false">交易統計</button>
-                        <button class="nav-link" id="nav-discount-tab" data-bs-toggle="tab"
+                        <!-- <button class="nav-link" id="nav-discount-tab" data-bs-toggle="tab"
                             data-bs-target="#nav-discount" type="button" role="tab" aria-controls="nav-discount"
-                            aria-selected="false">消費折抵</button>
+                            aria-selected="false">消費折抵</button> -->
                         <!-- <button class="btn btn-success ml-auto">登出</button> -->
                     </div>
                 </nav>
@@ -95,14 +95,18 @@
                     <div class="tab-pane fade" id="nav-vehicleFlowrate" role="tabpanel"
                         aria-labelledby="nav-vehicleFlowrate-tab">
                         <div class="d-flex mb-2 align-items-center">
-                            From：<input type="date" class="pe-3 me-2" v-model="searchFlowDateFrom">
-                            To：<input type="date" class="pe-3 me-2" v-model="searchFlowDateTo">
-                            <button type="submit" class="btn btn-success"
-                                @click="search(searchFlowDateFrom,searchFlowDateTo)">
-                                搜尋
+                            <input type="month" class="pe-3 me-2" v-model="searchFlowMonthData">
+                            <button type="submit" class="btn btn-success me-3"
+                                @click="searchFlowMonth(searchFlowMonthData)">
+                                按月搜尋
                             </button>
+                            <!-- <input type="date" class="pe-3 me-2" v-model="searchFlowDateData"> -->
+                            <!-- <button type="submit" class="btn btn-success"
+                                @click="searchFlowMonth(searchFlowDateData)">
+                                按日搜尋
+                            </button> -->
                         </div>
-                        <div class="table-responsive" v-if="searchFlowDateFrom === searchFlowDateTo">
+                        <div class="table-responsive flowDateTable">
                             <table class="table table-hover table-bordered text-center">
                                 <thead>
                                     <tr>
@@ -158,39 +162,34 @@
                                 </tbody>
                             </table>
                         </div>
-                        <div class="table-responsive" v-if="searchFlowDateFrom !== searchFlowDateTo">
+                        <div class="table-responsive flowMonthTable">
                             <table class="table table-hover table-bordered text-center">
                                 <thead>
                                     <tr>
-                                        <th colspan="13">每日車輛進出統計表</th>
+                                        <th colspan="12" class="fs-3">每日車輛進出統計表</th>
                                     </tr>
                                     <tr>
-                                        <th colspan="1"></th>
-                                        <th colspan="6">月租</th>
-                                        <th colspan="6">臨停</th>
+                                        <th colspan="4"></th>
+                                        <th colspan="4">月租</th>
+                                        <th colspan="4">臨停</th>
                                     </tr>
                                     <tr>
-                                        <td>日期</td>
-                                        <td colspan="3">進場</td>
-                                        <td colspan="3">出場</td>
-                                        <td colspan="3">進場</td>
-                                        <td colspan="3">出場</td>
+                                        <td colspan="4">日期</td>
+                                        <td colspan="2">進場</td>
+                                        <td colspan="2">出場</td>
+                                        <td colspan="2">進場</td>
+                                        <td colspan="2">出場</td>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
-                                        <td>7/1</td>
-                                        <td colspan="3">1</td>
-                                        <td colspan="3">1</td>
-                                        <td colspan="3">1</td>
-                                        <td colspan="3">1</td>
-                                    </tr>
-                                    <tr>
-                                        <td>7/2</td>
-                                        <td colspan="3">1</td>
-                                        <td colspan="3">1</td>
-                                        <td colspan="3">1</td>
-                                        <td colspan="3">1</td>
+                                    <tr v-for="flow in flowData">
+                                        <!-- carType:1 為月租；0 為臨停 -->
+                                        <!-- direction: 0 為進場；1 為出場 -->
+                                        <td colspan="4">{{flow.TRANSDATE}}</td>
+                                        <td colspan="2" v-if="flow.direction!=2">{{(flow.carType==1 && flow.direction==0) ? flow.countPlate : 0}}</td>
+                                        <td colspan="2" v-if="flow.direction!=2">{{(flow.carType==1 && flow.direction==1) ? flow.countPlate : 0}}</td>
+                                        <td colspan="2" v-if="flow.direction!=2">{{(flow.carType==0 && flow.direction==0) ? flow.countPlate : 0}}</td>
+                                        <td colspan="2" v-if="flow.direction!=2">{{(flow.carType==0 && flow.direction==1) ? flow.countPlate : 0}}</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -208,7 +207,8 @@
                                 搜尋
                             </button>
                             <button type="button" class="btn btn-outline-success mb-1 ml-auto"
-                                @click="transactionDetailstoExcel('xlsx')">匯出報表</button>
+                                @click="transactionDetailstoExcel('xlsx')">匯出報表
+                            </button>
                         </div>
                         <div class="table-responsive" id="transactionDetailsTable">
                             <table class="table table-hover table-bordered text-center fs-5">
@@ -264,42 +264,80 @@
                     </div>
                     <!-- 交易統計 -->
                     <div class="tab-pane fade" id="nav-statistics" role="tabpanel" aria-labelledby="nav-statistics-tab">
-                        交易統計頁面建置中...
-                    </div>
-                    <!-- 消費折抵 -->
-                    <div class="tab-pane fade" id="nav-discount" role="tabpanel" aria-labelledby="nav-discount-tab">
-                        <select name="discountStore" id="discountStore" class="mb-3" v-model="searchDiscountsData">
-                            <option v-for="who in  whos">{{who.who}}</option>
-                        </select>
-                        {{searchDiscountsData}}
-                        {{discounts}}
-                        <div class="table-responsive" id="discountTable">
-                            <table class="table table-hover table-bordered text-center">
+                        <div class="d-flex mb-2 align-items-center">
+                            <input type="date" class="pe-3 me-2" v-model="searchTransactionStatisticsData.startTime">
+                            <input type="date" class="pe-3 me-2" v-model="searchTransactionStatisticsData.endTime">
+                            <input type="checkbox" name="isElectric" id="isElectric" checked class="me-2"
+                                v-model="searchTransactionStatisticsData.isElectric">電動車
+                            <button type="submit" class="btn btn-success ms-3"
+                                @click="searchTransactionStatistic(searchTransactionStatisticsData)">
+                                搜尋
+                            </button>
+                            <button type="button" class="btn btn-outline-success mb-1 ml-auto"
+                                @click="transactionStatisticTabletoExcel('xlsx')">匯出報表
+                            </button>
+                        </div>
+                        <div class="table-responsive" id="transactionStatisticTable">
+                            <table class="table table-hover table-bordered text-center fs-5">
                                 <thead>
                                     <th>日期</th>
-                                    <th>商家</th>
-                                    <th>車輛筆數</th>
-                                    <th>折抵筆數</th>
-                                    <th>消費金額</th>
-                                    <th>折抵時數</th>
+                                    <th>計數</th>
+                                    <th>總消費金額</th>
+                                    <th>總停留分鐘</th>
+                                    <th>總折抵分鐘</th>
+                                    <th>總繳費金額</th>
                                 </thead>
                                 <tbody>
-                                    <tr v-for="discount in discounts">
-                                        <td>{{ discount }}</td>
-                                        <td>{{ discount.who }}</td>
-                                        <td>{{ discount.countLaneRecordId }}</td>
-                                        <td>{{ discount.countCoupon }}</td>
-                                        <td>{{ discount.totalExpense }}</td>
-                                        <td>{{ discount.totalHours }}</td>
+                                    <tr v-for="transactionStatistics in transactionStatisticsAll" class="align-middle">
+                                        <td class="align-middle">{{ transactionStatistics.TRANSDATE }}</td>
+                                        <td class="align-middle">{{ transactionStatistics.countELECTRIC ? transactionStatistics.countELECTRIC : transactionStatistics.countPlate }}</td>
+                                        <td class="align-middle"></td>
+                                        <td class="align-middle">{{ Math.round(transactionStatistics.totalSTAY*60) }}</td>
+                                        <td class="align-middle"></td>
+                                        <td class="align-middle">{{ transactionStatistics.totalAmount }}</td>
                                     </tr>
                                 </tbody>
                             </table>
                         </div>
+                        <!-- 查無資料 -->
+                        <div class="cantFind-Area-transactionStatisticsAll">
+                            <h3 class="text-center h3">目前無資料</h3>
+                        </div>
                     </div>
-
                 </div>
+                <!-- 消費折抵 -->
+                <!-- <div class="tab-pane fade" id="nav-discount" role="tabpanel" aria-labelledby="nav-discount-tab">
+                    <select name="discountStore" id="discountStore" class="mb-3" v-model="searchDiscountsData">
+                        <option v-for="who in  whos">{{who.who}}</option>
+                    </select>
+                    {{searchDiscountsData}}
+                    {{discounts}}
+                    <div class="table-responsive" id="discountTable">
+                        <table class="table table-hover table-bordered text-center">
+                            <thead>
+                                <th>日期</th>
+                                <th>商家</th>
+                                <th>車輛筆數</th>
+                                <th>折抵筆數</th>
+                                <th>消費金額</th>
+                                <th>折抵時數</th>
+                            </thead>
+                            <tbody>
+                                <tr v-for="discount in discounts">
+                                    <td>{{ discount }}</td>
+                                    <td>{{ discount.who }}</td>
+                                    <td>{{ discount.countLaneRecordId }}</td>
+                                    <td>{{ discount.countCoupon }}</td>
+                                    <td>{{ discount.totalExpense }}</td>
+                                    <td>{{ discount.totalHours }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div> -->
             </div>
         </div>
+    </div>
     </div>
 
     <script src="https://unpkg.com/vue@next"></script>

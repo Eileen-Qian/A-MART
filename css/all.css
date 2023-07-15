@@ -144,16 +144,14 @@ table {
 
 
 /* 無搜尋結果 */
-.cantFind-Area
+.cantFind-Area, .cantFind-Area-transactionStatisticsAll
 {
 	display: none;
 	margin-top: 30px;
 	text-align: center;
 }
 
-.block {
-	display: block;
-}
+
 
 /* 即時現況 */
 .instant{
@@ -179,4 +177,13 @@ table {
 	color: gray;
 	padding: 5px;
 	cursor: default;
+}
+
+/* 時段流量 */
+.flowDateTable{
+	display: none;
+}
+
+.block {
+	display: block;
 }
