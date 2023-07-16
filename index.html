@@ -33,9 +33,9 @@
                         <button class="nav-link" id="nav-statistics-tab" data-bs-toggle="tab"
                             data-bs-target="#nav-statistics" type="button" role="tab" aria-controls="nav-statistics"
                             aria-selected="false">交易統計</button>
-                        <!-- <button class="nav-link" id="nav-discount-tab" data-bs-toggle="tab"
+                        <button class="nav-link" id="nav-discount-tab" data-bs-toggle="tab"
                             data-bs-target="#nav-discount" type="button" role="tab" aria-controls="nav-discount"
-                            aria-selected="false">消費折抵</button> -->
+                            aria-selected="false">消費折抵</button>
                         <!-- <button class="btn btn-success ml-auto">登出</button> -->
                     </div>
                 </nav>
@@ -186,10 +186,14 @@
                                         <!-- carType:1 為月租；0 為臨停 -->
                                         <!-- direction: 0 為進場；1 為出場 -->
                                         <td colspan="4">{{flow.TRANSDATE}}</td>
-                                        <td colspan="2" v-if="flow.direction!=2">{{(flow.carType==1 && flow.direction==0) ? flow.countPlate : 0}}</td>
-                                        <td colspan="2" v-if="flow.direction!=2">{{(flow.carType==1 && flow.direction==1) ? flow.countPlate : 0}}</td>
-                                        <td colspan="2" v-if="flow.direction!=2">{{(flow.carType==0 && flow.direction==0) ? flow.countPlate : 0}}</td>
-                                        <td colspan="2" v-if="flow.direction!=2">{{(flow.carType==0 && flow.direction==1) ? flow.countPlate : 0}}</td>
+                                        <td colspan="2" v-if="flow.direction!=2">{{(flow.carType==1 &&
+                                            flow.direction==0) ? flow.countPlate : 0}}</td>
+                                        <td colspan="2" v-if="flow.direction!=2">{{(flow.carType==1 &&
+                                            flow.direction==1) ? flow.countPlate : 0}}</td>
+                                        <td colspan="2" v-if="flow.direction!=2">{{(flow.carType==0 &&
+                                            flow.direction==0) ? flow.countPlate : 0}}</td>
+                                        <td colspan="2" v-if="flow.direction!=2">{{(flow.carType==0 &&
+                                            flow.direction==1) ? flow.countPlate : 0}}</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -290,9 +294,12 @@
                                 <tbody>
                                     <tr v-for="transactionStatistics in transactionStatisticsAll" class="align-middle">
                                         <td class="align-middle">{{ transactionStatistics.TRANSDATE }}</td>
-                                        <td class="align-middle">{{ transactionStatistics.countELECTRIC ? transactionStatistics.countELECTRIC : transactionStatistics.countPlate }}</td>
+                                        <td class="align-middle">{{ transactionStatistics.countELECTRIC ?
+                                            transactionStatistics.countELECTRIC : transactionStatistics.countPlate }}
+                                        </td>
                                         <td class="align-middle"></td>
-                                        <td class="align-middle">{{ Math.round(transactionStatistics.totalSTAY*60) }}</td>
+                                        <td class="align-middle">{{ Math.round(transactionStatistics.totalSTAY*60) }}
+                                        </td>
                                         <td class="align-middle"></td>
                                         <td class="align-middle">{{ transactionStatistics.totalAmount }}</td>
                                     </tr>
@@ -304,37 +311,39 @@
                             <h3 class="text-center h3">目前無資料</h3>
                         </div>
                     </div>
-                </div>
-                <!-- 消費折抵 -->
-                <!-- <div class="tab-pane fade" id="nav-discount" role="tabpanel" aria-labelledby="nav-discount-tab">
-                    <select name="discountStore" id="discountStore" class="mb-3" v-model="searchDiscountsData">
-                        <option v-for="who in  whos">{{who.who}}</option>
-                    </select>
-                    {{searchDiscountsData}}
-                    {{discounts}}
-                    <div class="table-responsive" id="discountTable">
-                        <table class="table table-hover table-bordered text-center">
-                            <thead>
-                                <th>日期</th>
-                                <th>商家</th>
-                                <th>車輛筆數</th>
-                                <th>折抵筆數</th>
-                                <th>消費金額</th>
-                                <th>折抵時數</th>
-                            </thead>
-                            <tbody>
-                                <tr v-for="discount in discounts">
-                                    <td>{{ discount }}</td>
-                                    <td>{{ discount.who }}</td>
-                                    <td>{{ discount.countLaneRecordId }}</td>
-                                    <td>{{ discount.countCoupon }}</td>
-                                    <td>{{ discount.totalExpense }}</td>
-                                    <td>{{ discount.totalHours }}</td>
-                                </tr>
-                            </tbody>
-                        </table>
+                    <!-- 消費折抵 -->
+                    <div class="tab-pane fade" id="nav-discount" role="tabpanel" aria-labelledby="nav-discount-tab">
+                        <select name="discountStore" id="discountStore" class="mb-3" v-model="searchDiscountsData">
+                            <option v-for="who in  whos">{{who.who}}</option>
+                        </select>
+                        <button type="submit" class="btn btn-success ms-3"
+                            @click="searchDiscountStore(searchDiscountsData)">
+                            搜尋
+                        </button>
+                        <div class="table-responsive" id="discountTable">
+                            <table class="table table-hover table-bordered text-center">
+                                <thead>
+                                    <th>日期</th>
+                                    <th>商家</th>
+                                    <th>車輛筆數</th>
+                                    <th>折抵筆數</th>
+                                    <th>消費金額</th>
+                                    <th>折抵時數</th>
+                                </thead>
+                                <tbody>
+                                    <tr v-for="discount in discounts">
+                                        <td></td>
+                                        <td>{{ discount.who }}</td>
+                                        <td>{{ discount.countLaneRecordId }}</td>
+                                        <td>{{ discount.countCoupon }}</td>
+                                        <td>{{ discount.totalExpense }}</td>
+                                        <td>{{ discount.totalHours }}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
-                </div> -->
+                </div>
             </div>
         </div>
     </div>

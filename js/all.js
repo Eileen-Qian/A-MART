@@ -1,6 +1,6 @@
 import { createApp } from 'https://unpkg.com/vue@3/dist/vue.esm-browser.js';
 
-const Api = 'https://3c9e-119-77-141-185.ngrok-free.app';
+const Api = 'https://1d60-1-162-29-90.ngrok-free.app';
 const flowDateTable = document.querySelector('.flowDateTable');
 const flowMonthTable = document.querySelector('.flowMonthTable');
 let array = [];
@@ -219,29 +219,22 @@ const app = Vue.createApp({
                 })
         },
         // 消費折抵 list
-        // getDiscounts() {
-        //     const getDiscountsApi = `${Api}/discount`;
-        //     const discountStore = document.getElementById('discountStore');
-        //     discountStore.addEventListener('change', handleChangeWho);
-        //     function handleChangeWho() {
-        //         this.searchDiscountsData = discountStore.value;
-        //         axios
-        //             .post(getDiscountsApi, { target: { who: this.searchDiscountsData } })
-        //             .then((respponse) => {
-        //                 this.discounts = respponse.data;
-        //                 console.log('discounts', this.discounts);
-        //                 console.log('discounts.length', this.discounts.length);
-        //             })
-        //     }
-        // }
+        searchDiscountStore() {
+            const getDiscountsApi = `${Api}/discount`;
+            // const discountStore = document.getElementById('discountStore');
+            axios
+                .post(getDiscountsApi, { target: { who: this.searchDiscountsData } })
+                .then((respponse) => {
+                    this.discounts = respponse.data;
+                })
+        }
     },
     mounted() {
         // 交易明細 - 當天為電動車的資料
         this.isToday()
         this.checkIsElectric();
         // 消費折抵 - 商家列表
-        // this.getWhos();
-        // this.getDiscounts();
+        this.getWhos();
         // 即時現況
         setInterval(this.getTodayAll(), 1800000);
         setInterval(this.getTodayElectric(), 1800000);
