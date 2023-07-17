@@ -1,6 +1,6 @@
 import { createApp } from 'https://unpkg.com/vue@3/dist/vue.esm-browser.js';
 
-const Api = 'https://1d60-1-162-29-90.ngrok-free.app';
+const Api = 'https://43e6-114-36-48-12.ngrok-free.app';
 const flowDateTable = document.querySelector('.flowDateTable');
 const flowMonthTable = document.querySelector('.flowMonthTable');
 let array = [];

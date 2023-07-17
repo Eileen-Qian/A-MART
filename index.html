@@ -64,7 +64,7 @@
                                 </ul>
                                 <div class="parkRatio mt-5">
                                     <p>總停車率</p>
-                                    <p class="fs-4 text-dark">7%</p>
+                                    <p class="fs-4 text-dark">{{Math.round(todayAllData.rate*100)/100}} %</p>
                                 </div>
                             </div>
                             <div class="col-6">
@@ -83,10 +83,6 @@
                                         <span class="fs-4 text-dark">{{todayElectric.subtract}}</span>
                                     </li>
                                 </ul>
-                                <div class="parkRatio mt-5">
-                                    <p>電動車停車率</p>
-                                    <p class="fs-4 text-dark">3%</p>
-                                </div>
                             </div>
                         </div>
 
@@ -233,27 +229,30 @@
                                     <tr v-for="transactionDetail in transactionDetails" class="align-middle">
                                         <td class="align-middle">{{ transactionDetail.plate }}</td>
                                         <td class="align-middle">{{ transactionDetail.priceClass }}</td>
-                                        <td class="align-middle">{{ transactionDetail.carType }}</td>
+                                        <td class="align-middle">{{ transactionDetail.carType==0? '臨停' : '月租'}}</td>
                                         <td class="align-middle">{{ transactionDetail.ELECTRIC==1 ? '是' : '否'}}</td>
                                         <td class="align-middle">{{ transactionDetail.ENTERTIME }}</td>
                                         <td class="align-middle">{{ transactionDetail.transTime }}</td>
                                         <td class="align-middle">{{ Math.round(transactionDetail.STAY*60) }}</td>
                                         <td class="align-middle">{{ transactionDetail.amount }}</td>
                                         <td class="align-middle">
-                                            <ul>
-                                                <li v-for="discount in transactionDetail.discounts">{{
-                                                    discount.serialNumber }}</li>
+                                            <ul v-for="discount in transactionDetail.lane_record_coupons">
+                                                <li>
+                                                    {{ discount.serialNumber }}<br>
+                                                </li>
                                             </ul>
                                         </td>
                                         <td class="align-middle">
-                                            <ul>
-                                                <li v-for="discount in transactionDetail.discounts">{{ discount.expense
-                                                    }}</li>
+                                            <ul v-for="discount in transactionDetail.lane_record_coupons">
+                                                <li>
+                                                    {{ discount.expense }}
+                                                </li>
                                             </ul>
                                         </td>
                                         <td class="align-middle">
-                                            <ul>
-                                                <li v-for="discount in transactionDetail.discounts">{{ discount.hours }}
+                                            <ul v-for="discount in transactionDetail.lane_record_coupons">
+                                                <li>
+                                                    {{ discount.hours }}
                                                 </li>
                                             </ul>
                                         </td>
