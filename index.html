@@ -92,73 +92,16 @@
                         aria-labelledby="nav-vehicleFlowrate-tab">
                         <div class="d-flex mb-2 align-items-center">
                             <input type="month" class="pe-3 me-2" v-model="searchFlowMonthData">
-                            <button type="submit" class="btn btn-success me-3"
+                            <button type="submit" class="btn btn-success me-3 searchFlowMonth"
                                 @click="searchFlowMonth(searchFlowMonthData)">
                                 按月搜尋
                             </button>
-                            <!-- <input type="date" class="pe-3 me-2" v-model="searchFlowDateData"> -->
-                            <!-- <button type="submit" class="btn btn-success"
-                                @click="searchFlowMonth(searchFlowDateData)">
+                            <input type="date" class="pe-3 me-2" v-model="searchFlowDateData">
+                            <button type="submit" class="btn btn-success" @click="searchFlowDate(searchFlowDateData)">
                                 按日搜尋
-                            </button> -->
+                            </button>
                         </div>
-                        <div class="table-responsive flowDateTable">
-                            <table class="table table-hover table-bordered text-center">
-                                <thead>
-                                    <tr>
-                                        <th colspan="13">每小時車輛進出統計表</th>
-                                    </tr>
-                                    <tr>
-                                        <th colspan="1"></th>
-                                        <th colspan="4">月租</th>
-                                        <th colspan="4">臨停</th>
-                                        <th colspan="4">總和</th>
-                                    </tr>
-                                    <tr>
-                                        <td>時間</td>
-                                        <td colspan="2">進場</td>
-                                        <td colspan="2">出場</td>
-                                        <td colspan="2">進場</td>
-                                        <td colspan="2">出場</td>
-                                        <td colspan="2">進場</td>
-                                        <td colspan="2">出場</td>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td>00:00~00:59</td>
-                                        <td>1</td>
-                                        <td>1</td>
-                                        <td>1</td>
-                                        <td>1</td>
-                                        <td>1</td>
-                                        <td>1</td>
-                                        <td>1</td>
-                                        <td>1</td>
-                                        <td>2</td>
-                                        <td>2</td>
-                                        <td>2</td>
-                                        <td>2</td>
-                                    </tr>
-                                    <tr>
-                                        <td>01:00~01:59</td>
-                                        <td>1</td>
-                                        <td>1</td>
-                                        <td>1</td>
-                                        <td>1</td>
-                                        <td>1</td>
-                                        <td>1</td>
-                                        <td>1</td>
-                                        <td>1</td>
-                                        <td>2</td>
-                                        <td>2</td>
-                                        <td>2</td>
-                                        <td>2</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                        <div class="table-responsive flowMonthTable">
+                        <div class="table-responsive flowMonthTable d-none">
                             <table class="table table-hover table-bordered text-center">
                                 <thead>
                                     <tr>
@@ -179,8 +122,8 @@
                                 </thead>
                                 <tbody>
                                     <tr v-for="flow in flowData">
-                                        <!-- carType:1 為月租；0 為臨停 -->
-                                        <!-- direction: 0 為進場；1 為出場 -->
+                                        <!-- carType:1 為月租；0 為臨停
+                                        direction: 0 為進場；1 為出場 -->
                                         <td colspan="4">{{flow.TRANSDATE}}</td>
                                         <td colspan="2" v-if="flow.direction!=2">{{(flow.carType==1 &&
                                             flow.direction==0) ? flow.countPlate : 0}}</td>
@@ -191,6 +134,200 @@
                                         <td colspan="2" v-if="flow.direction!=2">{{(flow.carType==0 &&
                                             flow.direction==1) ? flow.countPlate : 0}}</td>
                                     </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="table-responsive flowDateTable d-none">
+                            <table class="table table-hover table-bordered text-center">
+                                <thead>
+                                    <tr>
+                                        <th colspan="12" class="fs-3">每小時車輛進出統計表</th>
+                                    </tr>
+                                    <tr>
+                                        <th colspan="1"></th>
+                                        <th colspan="4">月租</th>
+                                        <th colspan="4">臨停</th>
+                                        <!-- <th colspan="4">總和</th> -->
+                                    </tr>
+                                    <tr>
+                                        <td>時間</td>
+                                        <td colspan="2">進場</td>
+                                        <td colspan="2">出場</td>
+                                        <td colspan="2">進場</td>
+                                        <td colspan="2">出場</td>
+                                        <!-- <td colspan="2">進場</td>
+                                        <td colspan="2">出場</td> -->
+                                    </tr>
+                                </thead>
+                                <tbody v-for="flow in flowDateData">
+                                    <tr v-if="(flow.TRANSHOUR == '00' && flow.direction!=2)">
+                                        <td>00:00~00:59</td>
+                                        <td colspan="2">{{(flow.carType==1 && flow.direction==0) ? flow.countPlate : 0}}</td>
+                                        <td colspan="2">{{(flow.carType==1 && flow.direction==1) ? flow.countPlate : 0}}</td>
+                                        <td colspan="2">{{(flow.carType==0 && flow.direction==0) ? flow.countPlate : 0}}</td>
+                                        <td colspan="2">{{(flow.carType==0 && flow.direction==1) ? flow.countPlate : 0}}</td>
+                                    </tr>
+                                    <tr v-if="(flow.TRANSHOUR == '01' && flow.direction!=2)">
+                                        <td>01:00~01:59</td>
+                                        <td colspan="2">{{(flow.carType==1 && flow.direction==0) ? flow.countPlate : 0}}</td>
+                                        <td colspan="2">{{(flow.carType==1 && flow.direction==1) ? flow.countPlate : 0}}</td>
+                                        <td colspan="2">{{(flow.carType==0 && flow.direction==0) ? flow.countPlate : 0}}</td>
+                                        <td colspan="2">{{(flow.carType==0 && flow.direction==1) ? flow.countPlate : 0}}</td>
+                                    </tr>
+                                    <tr v-if="(flow.TRANSHOUR == '02' && flow.direction!=2)">
+                                        <td>02:00~02:59</td>
+                                        <td colspan="2">{{(flow.carType==1 && flow.direction==0) ? flow.countPlate : 0}}</td>
+                                        <td colspan="2">{{(flow.carType==1 && flow.direction==1) ? flow.countPlate : 0}}</td>
+                                        <td colspan="2">{{(flow.carType==0 && flow.direction==0) ? flow.countPlate : 0}}</td>
+                                        <td colspan="2">{{(flow.carType==0 && flow.direction==1) ? flow.countPlate : 0}}</td>
+                                    </tr>
+                                    <tr v-if="(flow.TRANSHOUR == '03' && flow.direction!=2)">
+                                        <td>03:00~03:59</td>
+                                        <td colspan="2">{{(flow.carType==1 && flow.direction==0) ? flow.countPlate : 0}}</td>
+                                        <td colspan="2">{{(flow.carType==1 && flow.direction==1) ? flow.countPlate : 0}}</td>
+                                        <td colspan="2">{{(flow.carType==0 && flow.direction==0) ? flow.countPlate : 0}}</td>
+                                        <td colspan="2">{{(flow.carType==0 && flow.direction==1) ? flow.countPlate : 0}}</td>
+                                    </tr>
+                                    <tr v-if="(flow.TRANSHOUR == '04' && flow.direction!=2)">
+                                        <td>04:00~04:59</td>
+                                        <td colspan="2">{{(flow.carType==1 && flow.direction==0) ? flow.countPlate : 0}}</td>
+                                        <td colspan="2">{{(flow.carType==1 && flow.direction==1) ? flow.countPlate : 0}}</td>
+                                        <td colspan="2">{{(flow.carType==0 && flow.direction==0) ? flow.countPlate : 0}}</td>
+                                        <td colspan="2">{{(flow.carType==0 && flow.direction==1) ? flow.countPlate : 0}}</td>
+                                    </tr>
+                                    <tr v-if="(flow.TRANSHOUR == '05' && flow.direction!=2)">
+                                        <td>05:00~05:59</td>
+                                        <td colspan="2">{{(flow.carType==1 && flow.direction==0) ? flow.countPlate : 0}}</td>
+                                        <td colspan="2">{{(flow.carType==1 && flow.direction==1) ? flow.countPlate : 0}}</td>
+                                        <td colspan="2">{{(flow.carType==0 && flow.direction==0) ? flow.countPlate : 0}}</td>
+                                        <td colspan="2">{{(flow.carType==0 && flow.direction==1) ? flow.countPlate : 0}}</td>
+                                    </tr>
+                                    <tr v-if="(flow.TRANSHOUR == '06' && flow.direction!=2)">
+                                        <td>06:00~06:59</td>
+                                        <td colspan="2">{{(flow.carType==1 && flow.direction==0) ? flow.countPlate : 0}}</td>
+                                        <td colspan="2">{{(flow.carType==1 && flow.direction==1) ? flow.countPlate : 0}}</td>
+                                        <td colspan="2">{{(flow.carType==0 && flow.direction==0) ? flow.countPlate : 0}}</td>
+                                        <td colspan="2">{{(flow.carType==0 && flow.direction==1) ? flow.countPlate : 0}}</td>
+                                    </tr>
+                                    <tr v-if="(flow.TRANSHOUR == '07' && flow.direction!=2)">
+                                        <td>07:00~07:59</td>
+                                        <td colspan="2">{{(flow.carType==1 && flow.direction==0) ? flow.countPlate : 0}}</td>
+                                        <td colspan="2">{{(flow.carType==1 && flow.direction==1) ? flow.countPlate : 0}}</td>
+                                        <td colspan="2">{{(flow.carType==0 && flow.direction==0) ? flow.countPlate : 0}}</td>
+                                        <td colspan="2">{{(flow.carType==0 && flow.direction==1) ? flow.countPlate : 0}}</td>
+                                    </tr>
+                                    <tr v-if="(flow.TRANSHOUR == '08' && flow.direction!=2)">
+                                        <td>08:00~08:59</td>
+                                        <td colspan="2">{{(flow.carType==1 && flow.direction==0) ? flow.countPlate : 0}}</td>
+                                        <td colspan="2">{{(flow.carType==1 && flow.direction==1) ? flow.countPlate : 0}}</td>
+                                        <td colspan="2">{{(flow.carType==0 && flow.direction==0) ? flow.countPlate : 0}}</td>
+                                        <td colspan="2">{{(flow.carType==0 && flow.direction==1) ? flow.countPlate : 0}}</td>
+                                    </tr>
+                                    <tr v-if="(flow.TRANSHOUR == '09' && flow.direction!=2)">
+                                        <td>09:00~09:59</td>
+                                        <td colspan="2">{{(flow.carType==1 && flow.direction==0) ? flow.countPlate : 0}}</td>
+                                        <td colspan="2">{{(flow.carType==1 && flow.direction==1) ? flow.countPlate : 0}}</td>
+                                        <td colspan="2">{{(flow.carType==0 && flow.direction==0) ? flow.countPlate : 0}}</td>
+                                        <td colspan="2">{{(flow.carType==0 && flow.direction==1) ? flow.countPlate : 0}}</td>
+                                    </tr>
+                                    <tr v-if="(flow.TRANSHOUR == '10' && flow.direction!=2)">
+                                        <td>10:00~10:59</td>
+                                        <td colspan="2">{{(flow.carType==1 && flow.direction==0) ? flow.countPlate : 0}}</td>
+                                        <td colspan="2">{{(flow.carType==1 && flow.direction==1) ? flow.countPlate : 0}}</td>
+                                        <td colspan="2">{{(flow.carType==0 && flow.direction==0) ? flow.countPlate : 0}}</td>
+                                        <td colspan="2">{{(flow.carType==0 && flow.direction==1) ? flow.countPlate : 0}}</td>
+                                    </tr>
+                                    <tr v-if="(flow.TRANSHOUR == '11'  && flow.direction!=2)">
+                                        <td>11:00~11:59</td>
+                                        <td colspan="2">{{(flow.carType==1 && flow.direction==0) ? flow.countPlate : 0}}</td>
+                                        <td colspan="2">{{(flow.carType==1 && flow.direction==1) ? flow.countPlate : 0}}</td>
+                                        <td colspan="2">{{(flow.carType==0 && flow.direction==0) ? flow.countPlate : 0}}</td>
+                                        <td colspan="2">{{(flow.carType==0 && flow.direction==1) ? flow.countPlate : 0}}</td>
+                                    </tr>
+                                    <tr v-if="(flow.TRANSHOUR == '12' && flow.direction!=2)">
+                                        <td>12:00~12:59</td>
+                                        <td colspan="2">{{(flow.carType==1 && flow.direction==0) ? flow.countPlate : 0}}</td>
+                                        <td colspan="2">{{(flow.carType==1 && flow.direction==1) ? flow.countPlate : 0}}</td>
+                                        <td colspan="2">{{(flow.carType==0 && flow.direction==0) ? flow.countPlate : 0}}</td>
+                                        <td colspan="2">{{(flow.carType==0 && flow.direction==1) ? flow.countPlate : 0}}</td>
+                                    </tr>
+                                    <tr v-if="(flow.TRANSHOUR == '13' && flow.direction!=2)">
+                                        <td>13:00~13:59</td>
+                                        <td colspan="2">{{(flow.carType==1 && flow.direction==0) ? flow.countPlate : 0}}</td>
+                                        <td colspan="2">{{(flow.carType==1 && flow.direction==1) ? flow.countPlate : 0}}</td>
+                                        <td colspan="2">{{(flow.carType==0 && flow.direction==0) ? flow.countPlate : 0}}</td>
+                                        <td colspan="2">{{(flow.carType==0 && flow.direction==1) ? flow.countPlate : 0}}</td>
+                                    </tr>
+                                    <tr v-if="(flow.TRANSHOUR == '14' && flow.direction!=2)">
+                                        <td>14:00~14:59</td>
+                                        <td colspan="2">{{(flow.carType==1 && flow.direction==0) ? flow.countPlate : 0}}</td>
+                                        <td colspan="2">{{(flow.carType==1 && flow.direction==1) ? flow.countPlate : 0}}</td>
+                                        <td colspan="2">{{(flow.carType==0 && flow.direction==0) ? flow.countPlate : 0}}</td>
+                                        <td colspan="2">{{(flow.carType==0 && flow.direction==1) ? flow.countPlate : 0}}</td>
+                                    </tr>
+                                    <tr v-if="(flow.TRANSHOUR == '15' && flow.direction!=2)">
+                                        <td>15:00~15:59</td>
+                                        <td colspan="2">{{(flow.carType==1 && flow.direction==0) ? flow.countPlate : 0}}</td>
+                                        <td colspan="2">{{(flow.carType==1 && flow.direction==1) ? flow.countPlate : 0}}</td>
+                                        <td colspan="2">{{(flow.carType==0 && flow.direction==0) ? flow.countPlate : 0}}</td>
+                                        <td colspan="2">{{(flow.carType==0 && flow.direction==1) ? flow.countPlate : 0}}</td>
+                                    </tr>
+                                    <tr v-if="(flow.TRANSHOUR == '16' && flow.direction!=2)">
+                                        <td>16:00~16:59</td>
+                                        <td colspan="2">{{(flow.carType==1 && flow.direction==0) ? flow.countPlate : 0}}</td>
+                                        <td colspan="2">{{(flow.carType==1 && flow.direction==1) ? flow.countPlate : 0}}</td>
+                                        <td colspan="2">{{(flow.carType==0 && flow.direction==0) ? flow.countPlate : 0}}</td>
+                                        <td colspan="2">{{(flow.carType==0 && flow.direction==1) ? flow.countPlate : 0}}</td>
+                                    </tr>
+                                    <tr v-if="(flow.TRANSHOUR == '17' && flow.direction!=2)">
+                                        <td>17:00~17:59</td>
+                                        <td colspan="2">{{(flow.carType==1 && flow.direction==0) ? flow.countPlate : 0}}</td>
+                                        <td colspan="2">{{(flow.carType==1 && flow.direction==1) ? flow.countPlate : 0}}</td>
+                                        <td colspan="2">{{(flow.carType==0 && flow.direction==0) ? flow.countPlate : 0}}</td>
+                                        <td colspan="2">{{(flow.carType==0 && flow.direction==1) ? flow.countPlate : 0}}</td>
+                                    </tr>
+                                    <tr v-if="(flow.TRANSHOUR == '18' && flow.direction!=2)">
+                                        <td>18:00~18:59</td>
+                                        <td colspan="2">{{(flow.carType==1 && flow.direction==0) ? flow.countPlate : 0}}</td>
+                                        <td colspan="2">{{(flow.carType==1 && flow.direction==1) ? flow.countPlate : 0}}</td>
+                                        <td colspan="2">{{(flow.carType==0 && flow.direction==0) ? flow.countPlate : 0}}</td>
+                                        <td colspan="2">{{(flow.carType==0 && flow.direction==1) ? flow.countPlate : 0}}</td>
+                                    </tr>
+                                    <tr v-if="(flow.TRANSHOUR == '19' && flow.direction!=2)">
+                                        <td>19:00~19:59</td>
+                                        <td colspan="2">{{(flow.carType==1 && flow.direction==0) ? flow.countPlate : 0}}</td>
+                                        <td colspan="2">{{(flow.carType==1 && flow.direction==1) ? flow.countPlate : 0}}</td>
+                                        <td colspan="2">{{(flow.carType==0 && flow.direction==0) ? flow.countPlate : 0}}</td>
+                                        <td colspan="2">{{(flow.carType==0 && flow.direction==1) ? flow.countPlate : 0}}</td>
+                                    </tr>
+                                    <tr v-if="(flow.TRANSHOUR == '20' && flow.direction!=2)">
+                                        <td>20:00~20:59</td>
+                                        <td colspan="2">{{(flow.carType==1 && flow.direction==0) ? flow.countPlate : 0}}</td>
+                                        <td colspan="2">{{(flow.carType==1 && flow.direction==1) ? flow.countPlate : 0}}</td>
+                                        <td colspan="2">{{(flow.carType==0 && flow.direction==0) ? flow.countPlate : 0}}</td>
+                                        <td colspan="2">{{(flow.carType==0 && flow.direction==1) ? flow.countPlate : 0}}</td>
+                                    </tr>
+                                    <tr v-if="(flow.TRANSHOUR == '21' && flow.direction!=2)">
+                                        <td>21:00~21:59</td>
+                                        <td colspan="2">{{(flow.carType==1 && flow.direction==0) ? flow.countPlate : 0}}</td>
+                                        <td colspan="2">{{(flow.carType==1 && flow.direction==1) ? flow.countPlate : 0}}</td>
+                                        <td colspan="2">{{(flow.carType==0 && flow.direction==0) ? flow.countPlate : 0}}</td>
+                                        <td colspan="2">{{(flow.carType==0 && flow.direction==1) ? flow.countPlate : 0}}</td>
+                                    </tr>
+                                    <tr v-if="(flow.TRANSHOUR == '22' && flow.direction!=2)">
+                                        <td>22:00~22:59</td>
+                                        <td colspan="2">{{(flow.carType==1 && flow.direction==0) ? flow.countPlate : 0}}</td>
+                                        <td colspan="2">{{(flow.carType==1 && flow.direction==1) ? flow.countPlate : 0}}</td>
+                                        <td colspan="2">{{(flow.carType==0 && flow.direction==0) ? flow.countPlate : 0}}</td>
+                                        <td colspan="2">{{(flow.carType==0 && flow.direction==1) ? flow.countPlate : 0}}</td>
+                                    </tr>
+                                    <tr v-if="(flow.TRANSHOUR == '23' && flow.direction!=2)">
+                                        <td>23:00~23:59</td>
+                                        <td colspan="2">{{(flow.carType==1 && flow.direction==0) ? flow.countPlate : 0}}</td>
+                                        <td colspan="2">{{(flow.carType==1 && flow.direction==1) ? flow.countPlate : 0}}</td>
+                                        <td colspan="2">{{(flow.carType==0 && flow.direction==0) ? flow.countPlate : 0}}</td>
+                                        <td colspan="2">{{(flow.carType==0 && flow.direction==1) ? flow.countPlate : 0}}</td>
+                                    </tr>                                    
                                 </tbody>
                             </table>
                         </div>
@@ -211,7 +348,7 @@
                             </button>
                         </div>
                         <div class="table-responsive" id="transactionDetailsTable">
-                            <table class="table table-hover table-bordered text-center fs-5">
+                            <table class="table table-hover table-bordered text-center fs-6">
                                 <thead>
                                     <th>車號</th>
                                     <th>車種</th>

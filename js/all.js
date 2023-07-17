@@ -1,9 +1,6 @@
 import { createApp } from 'https://unpkg.com/vue@3/dist/vue.esm-browser.js';
 
 const Api = 'https://43e6-114-36-48-12.ngrok-free.app';
-const flowDateTable = document.querySelector('.flowDateTable');
-const flowMonthTable = document.querySelector('.flowMonthTable');
-let array = [];
 
 const app = Vue.createApp({
     data() {
@@ -13,6 +10,7 @@ const app = Vue.createApp({
             todayElectric: [],
             // 時段流量
             flowData: [],
+            flowDateData: [],
             organizedFlowData: {},
             searchFlowMonthData: '', // 按月搜尋時段流量
             searchFlowDateData: '', // 按日搜尋時段流量
@@ -86,7 +84,7 @@ const app = Vue.createApp({
             axios
                 .get(getTodayElectricApi)
                 .then((response) => {
-                    this.todayElectric = response.data
+                    this.todayElectric = response.data;
                 })
         },
         // 時段流量
@@ -97,42 +95,59 @@ const app = Vue.createApp({
                 .post(searchFlowMonthApi, { target: { Time: this.searchFlowMonthData } })
                 .then((response) => {
                     this.flowData = response.data.flow;
+                    const flowMonthTable = document.querySelector('.flowMonthTable');
+                    const flowDateTable = document.querySelector('.flowDateTable');
+                    flowMonthTable.classList.remove('d-none');
+                    flowMonthTable.classList.add('block');
+                    flowDateTable.classList.remove('block');
+                    flowDateTable.classList.add('d-none')
                     // console.log(response.data.flow);
-                    const proxyArray = new Proxy((response.data.flow), {
-                        get(target, key) {
-                            // console.log('Getting property:', key);
-                            return Reflect.get(target, key);
-                        }
-                    })
-                    array = Array.from(proxyArray);
+                    // const proxyArray = new Proxy((response.data.flow), {
+                    //     get(target, key) {
+                    //         // console.log('Getting property:', key);
+                    //         return Reflect.get(target, key);
+                    //     }
+                    // })
+                    // array = Array.from(proxyArray);
                     // array.forEach(item => {
                     //     console.log(item);
                     // });
 
                     // 以日期為單位整理資料
-                    function convertProxyToArray(array) {
-                        if (Array.isArray(array)) {
-                            // 如果傳入的本身就是數組，則返回該數組本身
-                            return array;
-                            console.log(array);
-                        }
-                        for (const key in array) {
-                            if (array.hasOwnProperty(key)) {
-                                this.organizedFlowData.push(array[key]);
-                            }
-                            this.organizedFlowData = array;
-                            return this.organizedFlowData;
-                            console.log(array);
-                        }
-                        console.log(this.organizedFlowData);
-                        console.log(array);
-                    }
-                    convertProxyToArray(array);
+                    // function convertProxyToArray(array) {
+                    //     if (Array.isArray(array)) {
+                    //         // 如果傳入的本身就是數組，則返回該數組本身
+                    //         return array;
+                    //         console.log(array);
+                    //     }
+                    //     for (const key in array) {
+                    //         if (array.hasOwnProperty(key)) {
+                    //             this.organizedFlowData.push(array[key]);
+                    //         }
+                    //         this.organizedFlowData = array;
+                    //         return this.organizedFlowData;
+                    //         console.log(array);
+                    //     }
+                    //     console.log(this.organizedFlowData);
+                    //     console.log(array);
+                    // }
+                    // convertProxyToArray(array);
                 })
-            flowDateTable.classList.remove('block');
-            flowMonthTable.classList.add('block');
-            // console.log('flowDateTable',flowDateTable.classList);
-            // console.log('flowMonthTable',flowMonthTable.classList);
+        },
+        // 時段流量 - 按日搜尋
+        searchFlowDate() {
+            const searchFlowDateApi = `${Api}/flowhour`;
+            axios
+                .post(searchFlowDateApi, { target: { Time: this.searchFlowDateData } })
+                .then((response) => {
+                    this.flowDateData = response.data;
+                    const flowMonthTable = document.querySelector('.flowMonthTable');
+                    const flowDateTable = document.querySelector('.flowDateTable');
+                    flowDateTable.classList.remove('d-none');
+                    flowDateTable.classList.add('block');
+                    flowMonthTable.classList.remove('block');
+                    flowMonthTable.classList.add('d-none');
+                })
         },
         // 交易明細
         // 交易明細 - 當天為電動車的資料

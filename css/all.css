@@ -179,11 +179,11 @@ table {
 	cursor: default;
 }
 
-/* 時段流量 */
-.flowDateTable{
+.d-none{
 	display: none;
 }
 
 .block {
 	display: block;
 }
+
