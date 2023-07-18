@@ -101,42 +101,29 @@
                                 按日搜尋
                             </button>
                         </div>
-                        <div class="table-responsive flowMonthTable d-none">
-                            <table class="table table-hover table-bordered text-center">
-                                <thead>
-                                    <tr>
-                                        <th colspan="12" class="fs-3">每日車輛進出統計表</th>
-                                    </tr>
-                                    <tr>
-                                        <th colspan="4"></th>
-                                        <th colspan="4">月租</th>
-                                        <th colspan="4">臨停</th>
-                                    </tr>
-                                    <tr>
-                                        <td colspan="4">日期</td>
-                                        <td colspan="2">進場</td>
-                                        <td colspan="2">出場</td>
-                                        <td colspan="2">進場</td>
-                                        <td colspan="2">出場</td>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr v-for="flow in flowData">
-                                        <!-- carType:1 為月租；0 為臨停
-                                        direction: 0 為進場；1 為出場 -->
-                                        <td colspan="4">{{flow.TRANSDATE}}</td>
-                                        <td colspan="2" v-if="flow.direction!=2">{{(flow.carType==1 &&
-                                            flow.direction==0) ? flow.countPlate : 0}}</td>
-                                        <td colspan="2" v-if="flow.direction!=2">{{(flow.carType==1 &&
-                                            flow.direction==1) ? flow.countPlate : 0}}</td>
-                                        <td colspan="2" v-if="flow.direction!=2">{{(flow.carType==0 &&
-                                            flow.direction==0) ? flow.countPlate : 0}}</td>
-                                        <td colspan="2" v-if="flow.direction!=2">{{(flow.carType==0 &&
-                                            flow.direction==1) ? flow.countPlate : 0}}</td>
-                                    </tr>
-                                </tbody>
-                            </table>
+                        <div class="flowMonthTable d-none text-center">
+                            <p class="fs-3 border-b">每日車輛進出統計表</p>
+                            <div class="row">
+                                <p class="col-4"></p>
+                                <p class="col-4">月租</p>
+                                <p class="col-4">臨停</p>
+                            </div>
+                            <div class="row border-b">
+                                <p class="col-4">日期</p>
+                                <p class="col-2">進場</p>
+                                <p class="col-2">出場</p>
+                                <p class="col-2">進場</p>
+                                <p class="col-2">出場</p>
+                            </div>
+                            <div v-for="data in this.organizedMonthFlowData" class="row">
+                                <p class="col-4 border-b">{{ data.date }}</p>
+                                <p class="col-2 border-b">{{ data.monthIn ? data.monthIn : 0}}</p>
+                                <p class="col-2 border-b">{{ data.monthOut ? data.monthOut : 0}}</p>
+                                <p class="col-2 border-b">{{ data.tempIn ? data.tempIn : 0}}</p>
+                                <p class="col-2 border-b">{{ data.tempOut ? data.tempOut : 0}}</p>
+                            </div>
                         </div>
+
                         <div class="table-responsive flowDateTable d-none">
                             <table class="table table-hover table-bordered text-center">
                                 <thead>
@@ -159,175 +146,175 @@
                                         <td colspan="2">出場</td> -->
                                     </tr>
                                 </thead>
-                                <tbody v-for="flow in flowDateData">
-                                    <tr v-if="(flow.TRANSHOUR == '00' && flow.direction!=2)">
+                                <tbody v-for="flow in organizedDateFlowData">
+                                    <tr v-if="(flow.hour == '00' && flow.direction!=2)">
                                         <td>00:00~00:59</td>
-                                        <td colspan="2">{{(flow.carType==1 && flow.direction==0) ? flow.countPlate : 0}}</td>
-                                        <td colspan="2">{{(flow.carType==1 && flow.direction==1) ? flow.countPlate : 0}}</td>
-                                        <td colspan="2">{{(flow.carType==0 && flow.direction==0) ? flow.countPlate : 0}}</td>
-                                        <td colspan="2">{{(flow.carType==0 && flow.direction==1) ? flow.countPlate : 0}}</td>
+                                        <td colspan="2">{{ flow.monthIn ? flow.monthIn :0 }}</td>
+                                        <td colspan="2">{{ flow.monthOut ? flow.monthOut : 0 }}</td>
+                                        <td colspan="2">{{ flow.tempIn ? flow.tempIn :0 }}</td>
+                                        <td colspan="2">{{ flow.tempOut ? flow.tempOut :0 }}</td>
                                     </tr>
-                                    <tr v-if="(flow.TRANSHOUR == '01' && flow.direction!=2)">
+                                    <tr v-if="(flow.hour == '01' && flow.direction!=2)">
                                         <td>01:00~01:59</td>
-                                        <td colspan="2">{{(flow.carType==1 && flow.direction==0) ? flow.countPlate : 0}}</td>
-                                        <td colspan="2">{{(flow.carType==1 && flow.direction==1) ? flow.countPlate : 0}}</td>
-                                        <td colspan="2">{{(flow.carType==0 && flow.direction==0) ? flow.countPlate : 0}}</td>
-                                        <td colspan="2">{{(flow.carType==0 && flow.direction==1) ? flow.countPlate : 0}}</td>
+                                        <td colspan="2">{{ flow.monthIn ? flow.monthIn :0 }}</td>
+                                        <td colspan="2">{{ flow.monthOut ? flow.monthOut : 0 }}</td>
+                                        <td colspan="2">{{ flow.tempIn ? flow.tempIn :0 }}</td>
+                                        <td colspan="2">{{ flow.tempOut ? flow.tempOut :0 }}</td>
                                     </tr>
-                                    <tr v-if="(flow.TRANSHOUR == '02' && flow.direction!=2)">
+                                    <tr v-if="(flow.hour == '02' && flow.direction!=2)">
                                         <td>02:00~02:59</td>
-                                        <td colspan="2">{{(flow.carType==1 && flow.direction==0) ? flow.countPlate : 0}}</td>
-                                        <td colspan="2">{{(flow.carType==1 && flow.direction==1) ? flow.countPlate : 0}}</td>
-                                        <td colspan="2">{{(flow.carType==0 && flow.direction==0) ? flow.countPlate : 0}}</td>
-                                        <td colspan="2">{{(flow.carType==0 && flow.direction==1) ? flow.countPlate : 0}}</td>
+                                        <td colspan="2">{{ flow.monthIn ? flow.monthIn :0 }}</td>
+                                        <td colspan="2">{{ flow.monthOut ? flow.monthOut : 0 }}</td>
+                                        <td colspan="2">{{ flow.tempIn ? flow.tempIn :0 }}</td>
+                                        <td colspan="2">{{ flow.tempOut ? flow.tempOut :0 }}</td>
                                     </tr>
-                                    <tr v-if="(flow.TRANSHOUR == '03' && flow.direction!=2)">
+                                    <tr v-if="(flow.hour == '03' && flow.direction!=2)">
                                         <td>03:00~03:59</td>
-                                        <td colspan="2">{{(flow.carType==1 && flow.direction==0) ? flow.countPlate : 0}}</td>
-                                        <td colspan="2">{{(flow.carType==1 && flow.direction==1) ? flow.countPlate : 0}}</td>
-                                        <td colspan="2">{{(flow.carType==0 && flow.direction==0) ? flow.countPlate : 0}}</td>
-                                        <td colspan="2">{{(flow.carType==0 && flow.direction==1) ? flow.countPlate : 0}}</td>
+                                        <td colspan="2">{{ flow.monthIn ? flow.monthIn :0 }}</td>
+                                        <td colspan="2">{{ flow.monthOut ? flow.monthOut : 0 }}</td>
+                                        <td colspan="2">{{ flow.tempIn ? flow.tempIn :0 }}</td>
+                                        <td colspan="2">{{ flow.tempOut ? flow.tempOut :0 }}</td>
                                     </tr>
-                                    <tr v-if="(flow.TRANSHOUR == '04' && flow.direction!=2)">
+                                    <tr v-if="(flow.hour == '04' && flow.direction!=2)">
                                         <td>04:00~04:59</td>
-                                        <td colspan="2">{{(flow.carType==1 && flow.direction==0) ? flow.countPlate : 0}}</td>
-                                        <td colspan="2">{{(flow.carType==1 && flow.direction==1) ? flow.countPlate : 0}}</td>
-                                        <td colspan="2">{{(flow.carType==0 && flow.direction==0) ? flow.countPlate : 0}}</td>
-                                        <td colspan="2">{{(flow.carType==0 && flow.direction==1) ? flow.countPlate : 0}}</td>
+                                        <td colspan="2">{{ flow.monthIn ? flow.monthIn :0 }}</td>
+                                        <td colspan="2">{{ flow.monthOut ? flow.monthOut : 0 }}</td>
+                                        <td colspan="2">{{ flow.tempIn ? flow.tempIn :0 }}</td>
+                                        <td colspan="2">{{ flow.tempOut ? flow.tempOut :0 }}</td>
                                     </tr>
-                                    <tr v-if="(flow.TRANSHOUR == '05' && flow.direction!=2)">
+                                    <tr v-if="(flow.hour == '05' && flow.direction!=2)">
                                         <td>05:00~05:59</td>
-                                        <td colspan="2">{{(flow.carType==1 && flow.direction==0) ? flow.countPlate : 0}}</td>
-                                        <td colspan="2">{{(flow.carType==1 && flow.direction==1) ? flow.countPlate : 0}}</td>
-                                        <td colspan="2">{{(flow.carType==0 && flow.direction==0) ? flow.countPlate : 0}}</td>
-                                        <td colspan="2">{{(flow.carType==0 && flow.direction==1) ? flow.countPlate : 0}}</td>
+                                        <td colspan="2">{{ flow.monthIn ? flow.monthIn :0 }}</td>
+                                        <td colspan="2">{{ flow.monthOut ? flow.monthOut : 0 }}</td>
+                                        <td colspan="2">{{ flow.tempIn ? flow.tempIn :0 }}</td>
+                                        <td colspan="2">{{ flow.tempOut ? flow.tempOut :0 }}</td>
                                     </tr>
-                                    <tr v-if="(flow.TRANSHOUR == '06' && flow.direction!=2)">
+                                    <tr v-if="(flow.hour == '06' && flow.direction!=2)">
                                         <td>06:00~06:59</td>
-                                        <td colspan="2">{{(flow.carType==1 && flow.direction==0) ? flow.countPlate : 0}}</td>
-                                        <td colspan="2">{{(flow.carType==1 && flow.direction==1) ? flow.countPlate : 0}}</td>
-                                        <td colspan="2">{{(flow.carType==0 && flow.direction==0) ? flow.countPlate : 0}}</td>
-                                        <td colspan="2">{{(flow.carType==0 && flow.direction==1) ? flow.countPlate : 0}}</td>
+                                        <td colspan="2">{{ flow.monthIn ? flow.monthIn :0 }}</td>
+                                        <td colspan="2">{{ flow.monthOut ? flow.monthOut : 0 }}</td>
+                                        <td colspan="2">{{ flow.tempIn ? flow.tempIn :0 }}</td>
+                                        <td colspan="2">{{ flow.tempOut ? flow.tempOut :0 }}</td>
                                     </tr>
-                                    <tr v-if="(flow.TRANSHOUR == '07' && flow.direction!=2)">
+                                    <tr v-if="(flow.hour == '07' && flow.direction!=2)">
                                         <td>07:00~07:59</td>
-                                        <td colspan="2">{{(flow.carType==1 && flow.direction==0) ? flow.countPlate : 0}}</td>
-                                        <td colspan="2">{{(flow.carType==1 && flow.direction==1) ? flow.countPlate : 0}}</td>
-                                        <td colspan="2">{{(flow.carType==0 && flow.direction==0) ? flow.countPlate : 0}}</td>
-                                        <td colspan="2">{{(flow.carType==0 && flow.direction==1) ? flow.countPlate : 0}}</td>
+                                        <td colspan="2">{{ flow.monthIn ? flow.monthIn :0 }}</td>
+                                        <td colspan="2">{{ flow.monthOut ? flow.monthOut : 0 }}</td>
+                                        <td colspan="2">{{ flow.tempIn ? flow.tempIn :0 }}</td>
+                                        <td colspan="2">{{ flow.tempOut ? flow.tempOut :0 }}</td>
                                     </tr>
-                                    <tr v-if="(flow.TRANSHOUR == '08' && flow.direction!=2)">
+                                    <tr v-if="(flow.hour == '08' && flow.direction!=2)">
                                         <td>08:00~08:59</td>
-                                        <td colspan="2">{{(flow.carType==1 && flow.direction==0) ? flow.countPlate : 0}}</td>
-                                        <td colspan="2">{{(flow.carType==1 && flow.direction==1) ? flow.countPlate : 0}}</td>
-                                        <td colspan="2">{{(flow.carType==0 && flow.direction==0) ? flow.countPlate : 0}}</td>
-                                        <td colspan="2">{{(flow.carType==0 && flow.direction==1) ? flow.countPlate : 0}}</td>
+                                        <td colspan="2">{{ flow.monthIn ? flow.monthIn :0 }}</td>
+                                        <td colspan="2">{{ flow.monthOut ? flow.monthOut : 0 }}</td>
+                                        <td colspan="2">{{ flow.tempIn ? flow.tempIn :0 }}</td>
+                                        <td colspan="2">{{ flow.tempOut ? flow.tempOut :0 }}</td>
                                     </tr>
-                                    <tr v-if="(flow.TRANSHOUR == '09' && flow.direction!=2)">
+                                    <tr v-if="(flow.hour == '09' && flow.direction!=2)">
                                         <td>09:00~09:59</td>
-                                        <td colspan="2">{{(flow.carType==1 && flow.direction==0) ? flow.countPlate : 0}}</td>
-                                        <td colspan="2">{{(flow.carType==1 && flow.direction==1) ? flow.countPlate : 0}}</td>
-                                        <td colspan="2">{{(flow.carType==0 && flow.direction==0) ? flow.countPlate : 0}}</td>
-                                        <td colspan="2">{{(flow.carType==0 && flow.direction==1) ? flow.countPlate : 0}}</td>
+                                        <td colspan="2">{{ flow.monthIn ? flow.monthIn :0 }}</td>
+                                        <td colspan="2">{{ flow.monthOut ? flow.monthOut : 0 }}</td>
+                                        <td colspan="2">{{ flow.tempIn ? flow.tempIn :0 }}</td>
+                                        <td colspan="2">{{ flow.tempOut ? flow.tempOut :0 }}</td>
                                     </tr>
-                                    <tr v-if="(flow.TRANSHOUR == '10' && flow.direction!=2)">
+                                    <tr v-if="(flow.hour == '10' && flow.direction!=2)">
                                         <td>10:00~10:59</td>
-                                        <td colspan="2">{{(flow.carType==1 && flow.direction==0) ? flow.countPlate : 0}}</td>
-                                        <td colspan="2">{{(flow.carType==1 && flow.direction==1) ? flow.countPlate : 0}}</td>
-                                        <td colspan="2">{{(flow.carType==0 && flow.direction==0) ? flow.countPlate : 0}}</td>
-                                        <td colspan="2">{{(flow.carType==0 && flow.direction==1) ? flow.countPlate : 0}}</td>
+                                        <td colspan="2">{{ flow.monthIn ? flow.monthIn :0 }}</td>
+                                        <td colspan="2">{{ flow.monthOut ? flow.monthOut : 0 }}</td>
+                                        <td colspan="2">{{ flow.tempIn ? flow.tempIn :0 }}</td>
+                                        <td colspan="2">{{ flow.tempOut ? flow.tempOut :0 }}</td>
                                     </tr>
-                                    <tr v-if="(flow.TRANSHOUR == '11'  && flow.direction!=2)">
+                                    <tr v-if="(flow.hour == '11'  && flow.direction!=2)">
                                         <td>11:00~11:59</td>
-                                        <td colspan="2">{{(flow.carType==1 && flow.direction==0) ? flow.countPlate : 0}}</td>
-                                        <td colspan="2">{{(flow.carType==1 && flow.direction==1) ? flow.countPlate : 0}}</td>
-                                        <td colspan="2">{{(flow.carType==0 && flow.direction==0) ? flow.countPlate : 0}}</td>
-                                        <td colspan="2">{{(flow.carType==0 && flow.direction==1) ? flow.countPlate : 0}}</td>
+                                        <td colspan="2">{{ flow.monthIn ? flow.monthIn :0 }}</td>
+                                        <td colspan="2">{{ flow.monthOut ? flow.monthOut : 0 }}</td>
+                                        <td colspan="2">{{ flow.tempIn ? flow.tempIn :0 }}</td>
+                                        <td colspan="2">{{ flow.tempOut ? flow.tempOut :0 }}</td>
                                     </tr>
-                                    <tr v-if="(flow.TRANSHOUR == '12' && flow.direction!=2)">
+                                    <tr v-if="(flow.hour == '12' && flow.direction!=2)">
                                         <td>12:00~12:59</td>
-                                        <td colspan="2">{{(flow.carType==1 && flow.direction==0) ? flow.countPlate : 0}}</td>
-                                        <td colspan="2">{{(flow.carType==1 && flow.direction==1) ? flow.countPlate : 0}}</td>
-                                        <td colspan="2">{{(flow.carType==0 && flow.direction==0) ? flow.countPlate : 0}}</td>
-                                        <td colspan="2">{{(flow.carType==0 && flow.direction==1) ? flow.countPlate : 0}}</td>
+                                        <td colspan="2">{{ flow.monthIn ? flow.monthIn :0 }}</td>
+                                        <td colspan="2">{{ flow.monthOut ? flow.monthOut : 0 }}</td>
+                                        <td colspan="2">{{ flow.tempIn ? flow.tempIn :0 }}</td>
+                                        <td colspan="2">{{ flow.tempOut ? flow.tempOut :0 }}</td>
                                     </tr>
-                                    <tr v-if="(flow.TRANSHOUR == '13' && flow.direction!=2)">
+                                    <tr v-if="(flow.hour == '13' && flow.direction!=2)">
                                         <td>13:00~13:59</td>
-                                        <td colspan="2">{{(flow.carType==1 && flow.direction==0) ? flow.countPlate : 0}}</td>
-                                        <td colspan="2">{{(flow.carType==1 && flow.direction==1) ? flow.countPlate : 0}}</td>
-                                        <td colspan="2">{{(flow.carType==0 && flow.direction==0) ? flow.countPlate : 0}}</td>
-                                        <td colspan="2">{{(flow.carType==0 && flow.direction==1) ? flow.countPlate : 0}}</td>
+                                        <td colspan="2">{{ flow.monthIn ? flow.monthIn :0 }}</td>
+                                        <td colspan="2">{{ flow.monthOut ? flow.monthOut : 0 }}</td>
+                                        <td colspan="2">{{ flow.tempIn ? flow.tempIn :0 }}</td>
+                                        <td colspan="2">{{ flow.tempOut ? flow.tempOut :0 }}</td>
                                     </tr>
-                                    <tr v-if="(flow.TRANSHOUR == '14' && flow.direction!=2)">
+                                    <tr v-if="(flow.hour == '14' && flow.direction!=2)">
                                         <td>14:00~14:59</td>
-                                        <td colspan="2">{{(flow.carType==1 && flow.direction==0) ? flow.countPlate : 0}}</td>
-                                        <td colspan="2">{{(flow.carType==1 && flow.direction==1) ? flow.countPlate : 0}}</td>
-                                        <td colspan="2">{{(flow.carType==0 && flow.direction==0) ? flow.countPlate : 0}}</td>
-                                        <td colspan="2">{{(flow.carType==0 && flow.direction==1) ? flow.countPlate : 0}}</td>
+                                        <td colspan="2">{{ flow.monthIn ? flow.monthIn :0 }}</td>
+                                        <td colspan="2">{{ flow.monthOut ? flow.monthOut : 0 }}</td>
+                                        <td colspan="2">{{ flow.tempIn ? flow.tempIn :0 }}</td>
+                                        <td colspan="2">{{ flow.tempOut ? flow.tempOut :0 }}</td>
                                     </tr>
-                                    <tr v-if="(flow.TRANSHOUR == '15' && flow.direction!=2)">
+                                    <tr v-if="(flow.hour == '15' && flow.direction!=2)">
                                         <td>15:00~15:59</td>
-                                        <td colspan="2">{{(flow.carType==1 && flow.direction==0) ? flow.countPlate : 0}}</td>
-                                        <td colspan="2">{{(flow.carType==1 && flow.direction==1) ? flow.countPlate : 0}}</td>
-                                        <td colspan="2">{{(flow.carType==0 && flow.direction==0) ? flow.countPlate : 0}}</td>
-                                        <td colspan="2">{{(flow.carType==0 && flow.direction==1) ? flow.countPlate : 0}}</td>
+                                        <td colspan="2">{{ flow.monthIn ? flow.monthIn :0 }}</td>
+                                        <td colspan="2">{{ flow.monthOut ? flow.monthOut : 0 }}</td>
+                                        <td colspan="2">{{ flow.tempIn ? flow.tempIn :0 }}</td>
+                                        <td colspan="2">{{ flow.tempOut ? flow.tempOut :0 }}</td>
                                     </tr>
-                                    <tr v-if="(flow.TRANSHOUR == '16' && flow.direction!=2)">
+                                    <tr v-if="(flow.hour == '16' && flow.direction!=2)">
                                         <td>16:00~16:59</td>
-                                        <td colspan="2">{{(flow.carType==1 && flow.direction==0) ? flow.countPlate : 0}}</td>
-                                        <td colspan="2">{{(flow.carType==1 && flow.direction==1) ? flow.countPlate : 0}}</td>
-                                        <td colspan="2">{{(flow.carType==0 && flow.direction==0) ? flow.countPlate : 0}}</td>
-                                        <td colspan="2">{{(flow.carType==0 && flow.direction==1) ? flow.countPlate : 0}}</td>
+                                        <td colspan="2">{{ flow.monthIn ? flow.monthIn :0 }}</td>
+                                        <td colspan="2">{{ flow.monthOut ? flow.monthOut : 0 }}</td>
+                                        <td colspan="2">{{ flow.tempIn ? flow.tempIn :0 }}</td>
+                                        <td colspan="2">{{ flow.tempOut ? flow.tempOut :0 }}</td>
                                     </tr>
-                                    <tr v-if="(flow.TRANSHOUR == '17' && flow.direction!=2)">
+                                    <tr v-if="(flow.hour == '17' && flow.direction!=2)">
                                         <td>17:00~17:59</td>
-                                        <td colspan="2">{{(flow.carType==1 && flow.direction==0) ? flow.countPlate : 0}}</td>
-                                        <td colspan="2">{{(flow.carType==1 && flow.direction==1) ? flow.countPlate : 0}}</td>
-                                        <td colspan="2">{{(flow.carType==0 && flow.direction==0) ? flow.countPlate : 0}}</td>
-                                        <td colspan="2">{{(flow.carType==0 && flow.direction==1) ? flow.countPlate : 0}}</td>
+                                        <td colspan="2">{{ flow.monthIn ? flow.monthIn :0 }}</td>
+                                        <td colspan="2">{{ flow.monthOut ? flow.monthOut : 0 }}</td>
+                                        <td colspan="2">{{ flow.tempIn ? flow.tempIn :0 }}</td>
+                                        <td colspan="2">{{ flow.tempOut ? flow.tempOut :0 }}</td>
                                     </tr>
-                                    <tr v-if="(flow.TRANSHOUR == '18' && flow.direction!=2)">
+                                    <tr v-if="(flow.hour == '18' && flow.direction!=2)">
                                         <td>18:00~18:59</td>
-                                        <td colspan="2">{{(flow.carType==1 && flow.direction==0) ? flow.countPlate : 0}}</td>
-                                        <td colspan="2">{{(flow.carType==1 && flow.direction==1) ? flow.countPlate : 0}}</td>
-                                        <td colspan="2">{{(flow.carType==0 && flow.direction==0) ? flow.countPlate : 0}}</td>
-                                        <td colspan="2">{{(flow.carType==0 && flow.direction==1) ? flow.countPlate : 0}}</td>
+                                        <td colspan="2">{{ flow.monthIn ? flow.monthIn :0 }}</td>
+                                        <td colspan="2">{{ flow.monthOut ? flow.monthOut : 0 }}</td>
+                                        <td colspan="2">{{ flow.tempIn ? flow.tempIn :0 }}</td>
+                                        <td colspan="2">{{ flow.tempOut ? flow.tempOut :0 }}</td>
                                     </tr>
-                                    <tr v-if="(flow.TRANSHOUR == '19' && flow.direction!=2)">
+                                    <tr v-if="(flow.hour == '19' && flow.direction!=2)">
                                         <td>19:00~19:59</td>
-                                        <td colspan="2">{{(flow.carType==1 && flow.direction==0) ? flow.countPlate : 0}}</td>
-                                        <td colspan="2">{{(flow.carType==1 && flow.direction==1) ? flow.countPlate : 0}}</td>
-                                        <td colspan="2">{{(flow.carType==0 && flow.direction==0) ? flow.countPlate : 0}}</td>
-                                        <td colspan="2">{{(flow.carType==0 && flow.direction==1) ? flow.countPlate : 0}}</td>
+                                        <td colspan="2">{{ flow.monthIn ? flow.monthIn :0 }}</td>
+                                        <td colspan="2">{{ flow.monthOut ? flow.monthOut : 0 }}</td>
+                                        <td colspan="2">{{ flow.tempIn ? flow.tempIn :0 }}</td>
+                                        <td colspan="2">{{ flow.tempOut ? flow.tempOut :0 }}</td>
                                     </tr>
-                                    <tr v-if="(flow.TRANSHOUR == '20' && flow.direction!=2)">
+                                    <tr v-if="(flow.hour == '20' && flow.direction!=2)">
                                         <td>20:00~20:59</td>
-                                        <td colspan="2">{{(flow.carType==1 && flow.direction==0) ? flow.countPlate : 0}}</td>
-                                        <td colspan="2">{{(flow.carType==1 && flow.direction==1) ? flow.countPlate : 0}}</td>
-                                        <td colspan="2">{{(flow.carType==0 && flow.direction==0) ? flow.countPlate : 0}}</td>
-                                        <td colspan="2">{{(flow.carType==0 && flow.direction==1) ? flow.countPlate : 0}}</td>
+                                        <td colspan="2">{{ flow.monthIn ? flow.monthIn :0 }}</td>
+                                        <td colspan="2">{{ flow.monthOut ? flow.monthOut : 0 }}</td>
+                                        <td colspan="2">{{ flow.tempIn ? flow.tempIn :0 }}</td>
+                                        <td colspan="2">{{ flow.tempOut ? flow.tempOut :0 }}</td>
                                     </tr>
-                                    <tr v-if="(flow.TRANSHOUR == '21' && flow.direction!=2)">
+                                    <tr v-if="(flow.hour == '21' && flow.direction!=2)">
                                         <td>21:00~21:59</td>
-                                        <td colspan="2">{{(flow.carType==1 && flow.direction==0) ? flow.countPlate : 0}}</td>
-                                        <td colspan="2">{{(flow.carType==1 && flow.direction==1) ? flow.countPlate : 0}}</td>
-                                        <td colspan="2">{{(flow.carType==0 && flow.direction==0) ? flow.countPlate : 0}}</td>
-                                        <td colspan="2">{{(flow.carType==0 && flow.direction==1) ? flow.countPlate : 0}}</td>
+                                        <td colspan="2">{{ flow.monthIn ? flow.monthIn :0 }}</td>
+                                        <td colspan="2">{{ flow.monthOut ? flow.monthOut : 0 }}</td>
+                                        <td colspan="2">{{ flow.tempIn ? flow.tempIn :0 }}</td>
+                                        <td colspan="2">{{ flow.tempOut ? flow.tempOut :0 }}</td>
                                     </tr>
-                                    <tr v-if="(flow.TRANSHOUR == '22' && flow.direction!=2)">
+                                    <tr v-if="(flow.hour == '22' && flow.direction!=2)">
                                         <td>22:00~22:59</td>
-                                        <td colspan="2">{{(flow.carType==1 && flow.direction==0) ? flow.countPlate : 0}}</td>
-                                        <td colspan="2">{{(flow.carType==1 && flow.direction==1) ? flow.countPlate : 0}}</td>
-                                        <td colspan="2">{{(flow.carType==0 && flow.direction==0) ? flow.countPlate : 0}}</td>
-                                        <td colspan="2">{{(flow.carType==0 && flow.direction==1) ? flow.countPlate : 0}}</td>
+                                        <td colspan="2">{{ flow.monthIn ? flow.monthIn :0 }}</td>
+                                        <td colspan="2">{{ flow.monthOut ? flow.monthOut : 0 }}</td>
+                                        <td colspan="2">{{ flow.tempIn ? flow.tempIn :0 }}</td>
+                                        <td colspan="2">{{ flow.tempOut ? flow.tempOut :0 }}</td>
                                     </tr>
-                                    <tr v-if="(flow.TRANSHOUR == '23' && flow.direction!=2)">
+                                    <tr v-if="(flow.hour == '23' && flow.direction!=2)">
                                         <td>23:00~23:59</td>
-                                        <td colspan="2">{{(flow.carType==1 && flow.direction==0) ? flow.countPlate : 0}}</td>
-                                        <td colspan="2">{{(flow.carType==1 && flow.direction==1) ? flow.countPlate : 0}}</td>
-                                        <td colspan="2">{{(flow.carType==0 && flow.direction==0) ? flow.countPlate : 0}}</td>
-                                        <td colspan="2">{{(flow.carType==0 && flow.direction==1) ? flow.countPlate : 0}}</td>
-                                    </tr>                                    
+                                        <td colspan="2">{{ flow.monthIn ? flow.monthIn :0 }}</td>
+                                        <td colspan="2">{{ flow.monthOut ? flow.monthOut : 0 }}</td>
+                                        <td colspan="2">{{ flow.tempIn ? flow.tempIn :0 }}</td>
+                                        <td colspan="2">{{ flow.tempOut ? flow.tempOut :0 }}</td>
+                                    </tr>
                                 </tbody>
                             </table>
                         </div>

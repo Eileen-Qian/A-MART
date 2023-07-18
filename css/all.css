@@ -110,7 +110,7 @@ section {
 }
 
 body {
-	line-height: 1.5;
+	line-height: 2;
 }
 
 ol,
@@ -187,3 +187,7 @@ table {
 	display: block;
 }
 
+.border-b{
+	border-bottom: 1px  solid black;
+
+}

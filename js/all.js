@@ -1,6 +1,6 @@
 import { createApp } from 'https://unpkg.com/vue@3/dist/vue.esm-browser.js';
 
-const Api = 'https://43e6-114-36-48-12.ngrok-free.app';
+const Api = 'https://782e-122-116-23-30.ngrok-free.app';
 
 const app = Vue.createApp({
     data() {
@@ -10,8 +10,10 @@ const app = Vue.createApp({
             todayElectric: [],
             // 時段流量
             flowData: [],
+            organizedMonthFlowData: [], // 以日為單位的時段流量資料
+            organizedDateFlowData: [], // 以小時為單位的時段流量資料
             flowDateData: [],
-            organizedFlowData: {},
+            // organizedFlowData: {},
             searchFlowMonthData: '', // 按月搜尋時段流量
             searchFlowDateData: '', // 按日搜尋時段流量
             // 交易明細
@@ -94,44 +96,46 @@ const app = Vue.createApp({
             axios
                 .post(searchFlowMonthApi, { target: { Time: this.searchFlowMonthData } })
                 .then((response) => {
-                    this.flowData = response.data.flow;
+                    this.flowData = response.data;
                     const flowMonthTable = document.querySelector('.flowMonthTable');
                     const flowDateTable = document.querySelector('.flowDateTable');
                     flowMonthTable.classList.remove('d-none');
                     flowMonthTable.classList.add('block');
                     flowDateTable.classList.remove('block');
-                    flowDateTable.classList.add('d-none')
-                    // console.log(response.data.flow);
-                    // const proxyArray = new Proxy((response.data.flow), {
-                    //     get(target, key) {
-                    //         // console.log('Getting property:', key);
-                    //         return Reflect.get(target, key);
-                    //     }
-                    // })
-                    // array = Array.from(proxyArray);
-                    // array.forEach(item => {
-                    //     console.log(item);
-                    // });
+                    flowDateTable.classList.add('d-none');
 
                     // 以日期為單位整理資料
-                    // function convertProxyToArray(array) {
-                    //     if (Array.isArray(array)) {
-                    //         // 如果傳入的本身就是數組，則返回該數組本身
-                    //         return array;
-                    //         console.log(array);
-                    //     }
-                    //     for (const key in array) {
-                    //         if (array.hasOwnProperty(key)) {
-                    //             this.organizedFlowData.push(array[key]);
-                    //         }
-                    //         this.organizedFlowData = array;
-                    //         return this.organizedFlowData;
-                    //         console.log(array);
-                    //     }
-                    //     console.log(this.organizedFlowData);
-                    //     console.log(array);
-                    // }
-                    // convertProxyToArray(array);
+                    // 使用 reduce 函式整理資料
+                    this.organizedMonthFlowData = this.flowData.reduce((acc, entry) => {
+                        const { TRANSDATE, carType, direction, countPlate } = entry;
+
+                        // 設定進出場類型
+                        let type;
+                        if (carType === 1 && direction === 0) {
+                            type = "monthIn";
+                        } else if (carType === 1 && direction === 1) {
+                            type = "monthOut";
+                        } else if (carType === 0 && direction === 0) {
+                            type = "tempIn";
+                        } else if (carType === 0 && direction === 1) {
+                            type = "tempOut";
+                        }
+
+                        // 找尋是否已有當天資料，若無則建立新物件
+                        const existingEntry = acc.find((item) => item.date === TRANSDATE);
+                        if (existingEntry) {
+                            existingEntry[type] = countPlate;
+                        } else {
+                            const newEntry = {
+                                date: TRANSDATE,
+                                [type]: countPlate,
+                            };
+                            acc.push(newEntry);
+                        }
+
+                        return acc;
+                    }, []);
+                    // console.log(this.organizedMonthFlowData);
                 })
         },
         // 時段流量 - 按日搜尋
@@ -147,6 +151,40 @@ const app = Vue.createApp({
                     flowDateTable.classList.add('block');
                     flowMonthTable.classList.remove('block');
                     flowMonthTable.classList.add('d-none');
+                    // 以小時為單位整理資料
+                    // 使用 reduce 函式整理資料
+                    this.organizedDateFlowData = this.flowDateData.reduce((acc, entry) => {
+                        const { TRANSHOUR, carType, direction, countPlate } = entry;
+                    
+                        // 設定進出場類型
+                        let type;
+                        if (carType === 1 && direction === 0) {
+                            type = "monthIn";
+                        } else if (carType === 1 && direction === 1) {
+                            type = "monthOut";
+                        } else if (carType === 0 && direction === 0) {
+                            type = "tempIn";
+                        } else if (carType === 0 && direction === 1) {
+                            type = "tempOut";
+                        }
+                    
+                        // 找尋是否已有當小時資料，若無則建立新物件
+                        const existingHourEntry = acc.find((item) => item.hour === TRANSHOUR);
+                        if (existingHourEntry) {
+                            existingHourEntry[type] = countPlate;
+                        } else {
+                            const newHourEntry = {
+                                hour: TRANSHOUR,
+                                [type]: countPlate,
+                            };
+                            acc.push(newHourEntry);
+                        }
+                    
+                        return acc;
+                    }, []);
+                    
+                    // 輸出結果
+                    // console.log(JSON.stringify(organizedData, null, 2));
                 })
         },
         // 交易明細
