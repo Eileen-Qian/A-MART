@@ -1,6 +1,7 @@
 import { createApp } from 'https://unpkg.com/vue@3/dist/vue.esm-browser.js';
 
-const Api = 'https://782e-122-116-23-30.ngrok-free.app';
+
+const Api = 'https://95a5-122-116-23-30.ngrok-free.app';
 
 const app = Vue.createApp({
     data() {
@@ -93,6 +94,7 @@ const app = Vue.createApp({
         // 時段流量 - 按月搜尋
         searchFlowMonth(searchFlowMonth) {
             const searchFlowMonthApi = `${Api}/flow`;
+            const cantFindArea = document.querySelector('.cantFind-Area-flow');
             axios
                 .post(searchFlowMonthApi, { target: { Time: this.searchFlowMonthData } })
                 .then((response) => {
@@ -136,11 +138,15 @@ const app = Vue.createApp({
                         return acc;
                     }, []);
                     // console.log(this.organizedMonthFlowData);
+                    this.organizedMonthFlowData.length > 0
+                    ? cantFindArea.classList.remove('block')
+                    : cantFindArea.classList.add('block');
                 })
         },
         // 時段流量 - 按日搜尋
         searchFlowDate() {
             const searchFlowDateApi = `${Api}/flowhour`;
+            const cantFindArea = document.querySelector('.cantFind-Area-flow');
             axios
                 .post(searchFlowDateApi, { target: { Time: this.searchFlowDateData } })
                 .then((response) => {
@@ -185,6 +191,9 @@ const app = Vue.createApp({
                     
                     // 輸出結果
                     // console.log(JSON.stringify(organizedData, null, 2));
+                    this.organizedDateFlowData.length > 0
+                    ? cantFindArea.classList.remove('block')
+                    : cantFindArea.classList.add('block');
                 })
         },
         // 交易明細

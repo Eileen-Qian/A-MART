@@ -144,8 +144,8 @@ table {
 
 
 /* 無搜尋結果 */
-.cantFind-Area, .cantFind-Area-transactionStatisticsAll
-{
+.cantFind-Area,
+.cantFind-Area-transactionStatisticsAll, .cantFind-Area-flow {
 	display: none;
 	margin-top: 30px;
 	text-align: center;
@@ -154,12 +154,13 @@ table {
 
 
 /* 即時現況 */
-.instant{
+.instant {
 	display: flex;
 	justify-content: space-between;
 }
-.instant li{
-	border: 1px  solid #DEDEDE;
+
+.instant li {
+	border: 1px solid #DEDEDE;
 	border-radius: 5px;
 	width: 25%;
 	margin-right: 10px;
@@ -169,8 +170,8 @@ table {
 	cursor: default;
 }
 
-.parkRatio{
-	border: 1px  solid #DEDEDE;
+.parkRatio {
+	border: 1px solid #DEDEDE;
 	border-radius: 5px;
 	margin-right: 10px;
 	font-size: 8px;
@@ -179,7 +180,7 @@ table {
 	cursor: default;
 }
 
-.d-none{
+.d-none {
 	display: none;
 }
 
@@ -187,7 +188,7 @@ table {
 	display: block;
 }
 
-.border-b{
-	border-bottom: 1px  solid black;
+.border-b {
+	border-bottom: 1px solid black;
 
 }

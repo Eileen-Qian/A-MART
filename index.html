@@ -85,7 +85,6 @@
                                 </ul>
                             </div>
                         </div>
-
                     </div>
                     <!-- 時段流量 -->
                     <div class="tab-pane fade" id="nav-vehicleFlowrate" role="tabpanel"
@@ -333,6 +332,11 @@
                                 </tbody>
                             </table>
                         </div>
+
+                        <!-- 查無資料 -->
+                        <div class="cantFind-Area-flow">
+                            <h3 class="text-center h3">目前無資料</h3>
+                        </div>
                     </div>
                     <!-- 交易明細 -->
                     <div class="tab-pane fade" id="nav-transactionDetails" role="tabpanel"
@@ -391,7 +395,7 @@
                                         <td class="align-middle">
                                             <ul v-for="discount in transactionDetail.lane_record_coupons">
                                                 <li>
-                                                    {{ discount.hours }}
+                                                    {{ Math.round(discount.hours)*60 }}
                                                 </li>
                                             </ul>
                                         </td>
@@ -432,14 +436,13 @@
                                 <tbody>
                                     <tr v-for="transactionStatistics in transactionStatisticsAll" class="align-middle">
                                         <td class="align-middle">{{ transactionStatistics.TRANSDATE }}</td>
-                                        <td class="align-middle">{{ transactionStatistics.countELECTRIC ?
-                                            transactionStatistics.countELECTRIC : transactionStatistics.countPlate }}
-                                        </td>
-                                        <td class="align-middle"></td>
+                                        <td class="align-middle">{{ transactionStatistics.countPlate }}</td>
+                                        <td class="align-middle">{{ transactionStatistics.totalExpense }}</td>
                                         <td class="align-middle">{{ Math.round(transactionStatistics.totalSTAY*60) }}
                                         </td>
-                                        <td class="align-middle"></td>
-                                        <td class="align-middle">{{ transactionStatistics.totalAmount }}</td>
+                                        <td class="align-middle">{{ Math.round(transactionStatistics.totalHours*60) }}
+                                        </td>
+                                        <td class="align-middle">{{ transactionStatistics.totalExpense }}</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -466,16 +469,16 @@
                                     <th>車輛筆數</th>
                                     <th>折抵筆數</th>
                                     <th>消費金額</th>
-                                    <th>折抵時數</th>
+                                    <th>折抵分鐘</th>
                                 </thead>
                                 <tbody>
                                     <tr v-for="discount in discounts">
-                                        <td></td>
+                                        <td>{{ discount.TRANSDATE }}</td>
                                         <td>{{ discount.who }}</td>
                                         <td>{{ discount.countLaneRecordId }}</td>
                                         <td>{{ discount.countCoupon }}</td>
                                         <td>{{ discount.totalExpense }}</td>
-                                        <td>{{ discount.totalHours }}</td>
+                                        <td>{{ Math.round(discount.totalHours)*60 }}</td>
                                     </tr>
                                 </tbody>
                             </table>
