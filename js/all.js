@@ -252,15 +252,25 @@ const app = Vue.createApp({
         searchTransactionStatistic(searchTransactionStatisticsData) {
             const searchTransactionStatisticApi = `${Api}/statistic`;
             const cantFindArea1 = document.querySelector('.cantFind-Area-transactionStatisticsAll');
-            axios
-                .post(searchTransactionStatisticApi, { target: this.searchTransactionStatisticsData })
-                .then((response) => {
-                    // console.log(response.data);
-                    this.transactionStatisticsAll = response.data;
-                    this.transactionStatisticsAll.length > 0
-                        ? cantFindArea1.classList.remove('block')
-                        : cantFindArea1.classList.add('block');
-                })
+            if(this.searchTransactionStatisticsData.startTime > this.searchTransactionStatisticsData.endTime){
+                alert("請確認選擇區間")
+            }else{
+                if(this.searchTransactionStatisticsData.startTime != '' && this.searchTransactionStatisticsData.endTime != ''){
+                    axios
+                    .post(searchTransactionStatisticApi, { target: this.searchTransactionStatisticsData })
+                    .then((response) => {
+                        // console.log(response.data);
+                        this.transactionStatisticsAll = response.data;
+                        this.transactionStatisticsAll.length > 0
+                            ? cantFindArea1.classList.remove('block')
+                            : cantFindArea1.classList.add('block');
+                    })
+                }else{
+                    alert("請選擇日期")
+                }
+            }
+            
+
         },
         // 交易統計 - 匯出報表
         transactionStatisticTabletoExcel(type, fn, dl) {
