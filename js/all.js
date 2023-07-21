@@ -1,7 +1,7 @@
 import { createApp } from 'https://unpkg.com/vue@3/dist/vue.esm-browser.js';
 
 
-const Api = 'https://95a5-122-116-23-30.ngrok-free.app';
+const Api = 'https://68f7-122-116-23-30.ngrok-free.app';
 
 const app = Vue.createApp({
     data() {
