@@ -6,6 +6,7 @@ const Api = 'https://68f7-122-116-23-30.ngrok-free.app';
 const app = Vue.createApp({
     data() {
         return {
+            isLoading: false,
             // 即時現況
             todayAllData: [],
             todayElectric: [],
@@ -75,19 +76,23 @@ const app = Vue.createApp({
         // 即時現況 - 取本日全部車輛
         getTodayAll() {
             const getTodayAllApi = `${Api}/today/all`;
+            this.isLoading = true;
             axios
                 .get(getTodayAllApi)
                 .then((response) => {
                     this.todayAllData = response.data;
+                    this.isLoading = false;
                 })
         },
         // 即時現況 - 取本日電動車 
         getTodayElectric() {
+            this.isLoading = true;
             const getTodayElectricApi = `${Api}/today/electric`;
             axios
                 .get(getTodayElectricApi)
                 .then((response) => {
                     this.todayElectric = response.data;
+                    this.isLoading = false;
                 })
         },
         // 時段流量
@@ -95,9 +100,11 @@ const app = Vue.createApp({
         searchFlowMonth(searchFlowMonth) {
             const searchFlowMonthApi = `${Api}/flow`;
             const cantFindArea = document.querySelector('.cantFind-Area-flow');
+            this.isLoading = true;
             axios
                 .post(searchFlowMonthApi, { target: { Time: this.searchFlowMonthData } })
                 .then((response) => {
+                    this.isLoading = false;
                     this.flowData = response.data;
                     const flowMonthTable = document.querySelector('.flowMonthTable');
                     const flowDateTable = document.querySelector('.flowDateTable');
@@ -105,12 +112,10 @@ const app = Vue.createApp({
                     flowMonthTable.classList.add('block');
                     flowDateTable.classList.remove('block');
                     flowDateTable.classList.add('d-none');
-
                     // 以日期為單位整理資料
                     // 使用 reduce 函式整理資料
                     this.organizedMonthFlowData = this.flowData.reduce((acc, entry) => {
                         const { TRANSDATE, carType, direction, countPlate } = entry;
-
                         // 設定進出場類型
                         let type;
                         if (carType === 1 && direction === 0) {
@@ -134,7 +139,6 @@ const app = Vue.createApp({
                             };
                             acc.push(newEntry);
                         }
-
                         return acc;
                     }, []);
                     // console.log(this.organizedMonthFlowData);
@@ -147,9 +151,11 @@ const app = Vue.createApp({
         searchFlowDate() {
             const searchFlowDateApi = `${Api}/flowhour`;
             const cantFindArea = document.querySelector('.cantFind-Area-flow');
+            this.isLoading = true;
             axios
                 .post(searchFlowDateApi, { target: { Time: this.searchFlowDateData } })
                 .then((response) => {
+                    this.isLoading = false;
                     this.flowDateData = response.data;
                     const flowMonthTable = document.querySelector('.flowMonthTable');
                     const flowDateTable = document.querySelector('.flowDateTable');
@@ -222,10 +228,12 @@ const app = Vue.createApp({
         searchTransactionDetails(searchTransactionDetailsData) {
             const getTransactionApi = `${Api}/transaction`;
             const cantFindArea = document.querySelector('.cantFind-Area');
+            this.isLoading = true;
             axios
                 .post(getTransactionApi, { target: this.searchTransactionDetailsData })
                 .then((response) => {
                     this.transactionDetails = response.data;
+                    this.isLoading = false;
                     this.transactionDetails.length > 0
                         ? cantFindArea.classList.remove('block')
                         : cantFindArea.classList.add('block');
@@ -256,11 +264,13 @@ const app = Vue.createApp({
                 alert("請確認選擇區間")
             }else{
                 if(this.searchTransactionStatisticsData.startTime != '' && this.searchTransactionStatisticsData.endTime != ''){
+                    this.isLoading = true;
                     axios
                     .post(searchTransactionStatisticApi, { target: this.searchTransactionStatisticsData })
                     .then((response) => {
                         // console.log(response.data);
                         this.transactionStatisticsAll = response.data;
+                        this.isLoading = false;
                         this.transactionStatisticsAll.length > 0
                             ? cantFindArea1.classList.remove('block')
                             : cantFindArea1.classList.add('block');
@@ -293,11 +303,12 @@ const app = Vue.createApp({
         // 消費折抵 list
         searchDiscountStore() {
             const getDiscountsApi = `${Api}/discount`;
-            // const discountStore = document.getElementById('discountStore');
+            this.isLoading = true;
             axios
                 .post(getDiscountsApi, { target: { who: this.searchDiscountsData } })
                 .then((respponse) => {
                     this.discounts = respponse.data;
+                    this.isLoading = false;
                 })
         }
     },
