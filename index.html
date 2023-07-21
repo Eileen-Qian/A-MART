@@ -369,7 +369,7 @@
                                     <th>折扣時數(分鐘)</th>
                                 </thead>
                                 <tbody>
-                                    <tr v-for="transactionDetail in transactionDetails" class="align-middle">
+                                    <tr v-for="transactionDetail in transactionDetails" class="align-middle" :key="transactionDetail.id">
                                         <td class="align-middle">{{ transactionDetail.plate }}</td>
                                         <td class="align-middle">{{ transactionDetail.priceClass }}</td>
                                         <td class="align-middle">{{ transactionDetail.carType==0? '臨停' : '月租'}}</td>
@@ -379,23 +379,26 @@
                                         <td class="align-middle">{{ Math.round(transactionDetail.STAY*60) }}</td>
                                         <td class="align-middle">{{ transactionDetail.amount }}</td>
                                         <td class="align-middle">
-                                            <ul v-for="discount in transactionDetail.lane_record_coupons">
+                                            <ul v-for="(discount, index) in transactionDetail.lane_record_coupons" :key="discount.couponId">
                                                 <li>
-                                                    {{ discount.serialNumber }}<br>
+                                                    {{ discount.serialNumber }}
+                                                    <span v-if="index !== transactionDetail.lane_record_coupons.length-1">，</span>
                                                 </li>
                                             </ul>
                                         </td>
                                         <td class="align-middle">
-                                            <ul v-for="discount in transactionDetail.lane_record_coupons">
+                                            <ul v-for="(discount, index) in transactionDetail.lane_record_coupons">
                                                 <li>
                                                     {{ discount.expense }}
+                                                    <span v-if="index !== transactionDetail.lane_record_coupons.length-1">，</span>
                                                 </li>
                                             </ul>
                                         </td>
                                         <td class="align-middle">
-                                            <ul v-for="discount in transactionDetail.lane_record_coupons">
+                                            <ul v-for="(discount, index) in transactionDetail.lane_record_coupons">
                                                 <li>
                                                     {{ Math.round(discount.hours)*60 }}
+                                                    <span v-if="index !== transactionDetail.lane_record_coupons.length-1">，</span>
                                                 </li>
                                             </ul>
                                         </td>
