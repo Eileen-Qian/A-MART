@@ -1,7 +1,10 @@
 import { createApp } from 'https://unpkg.com/vue@3/dist/vue.esm-browser.js';
 
+const Api = 'http://218.161.9.195:9130';
 
-const Api = 'https://68f7-122-116-23-30.ngrok-free.app';
+const YYYY = new Date().getFullYear();
+const MM = (new Date().getMonth() + 1).toString().padStart(2, '0');
+const dd = new Date().getDate();
 
 const app = Vue.createApp({
     data() {
@@ -15,40 +18,11 @@ const app = Vue.createApp({
             organizedMonthFlowData: [], // 以日為單位的時段流量資料
             organizedDateFlowData: [], // 以小時為單位的時段流量資料
             flowDateData: [],
-            // organizedFlowData: {},
             searchFlowMonthData: '', // 按月搜尋時段流量
             searchFlowDateData: '', // 按日搜尋時段流量
             // 交易明細
             today: '',
-            transactionDetails: [
-                // {
-                //     id: 1,
-                //     plate: 'EAC-1017', // 車號
-                //     priceClass: '汽車', // 車種
-                //     carType: '計時臨停', // 身分別
-                //     isElectric: true, // 是否為電動車
-                //     enterTime: '2023-07-01 12:47', // 進場時間
-                //     transTime: '2023-07-01 13:06', //出場時間
-                //     stay: 19,
-                //     payAmount: 0,
-                //     discounts: [
-                //         {
-                //             discountid: 1,
-                //             serialNumber: 'EC111111111', // 消費發票
-                //             expense: 1000, // 消費金額
-                //             who: '愛買', // 消費店家
-                //             hours: 10
-                //         },
-                //         {
-                //             discountid: 2,
-                //             serialNumber: 'EC222222222', // 消費發票
-                //             expense: 150, // 消費金額
-                //             who: '吉野家', // 消費店家
-                //             hours: 5
-                //         }
-                //     ]
-                // },
-            ],
+            transactionDetails: [],
             // 搜尋交易明細
             searchTransactionDetailsData: {
                 "isElectric": true,
@@ -96,7 +70,11 @@ const app = Vue.createApp({
                 })
         },
         // 時段流量
-        // 時段流量 - 按月搜尋
+        // 時段流量 - 預設當月
+        thisMonthFlow(){
+            this.searchFlowMonthData = YYYY + '-' + MM;
+        },
+         // 時段流量 - 按月搜尋
         searchFlowMonth(searchFlowMonth) {
             const searchFlowMonthApi = `${Api}/flow`;
             const cantFindArea = document.querySelector('.cantFind-Area-flow');
@@ -141,11 +119,14 @@ const app = Vue.createApp({
                         }
                         return acc;
                     }, []);
-                    // console.log(this.organizedMonthFlowData);
                     this.organizedMonthFlowData.length > 0
                     ? cantFindArea.classList.remove('block')
                     : cantFindArea.classList.add('block');
                 })
+        },
+        // 時段流量 - 預設當日
+        thisDateFlow(){
+            this.searchFlowDateData = YYYY + '-' + MM + '-' + dd;
         },
         // 時段流量 - 按日搜尋
         searchFlowDate() {
@@ -205,9 +186,6 @@ const app = Vue.createApp({
         // 交易明細
         // 交易明細 - 當天為電動車的資料
         isToday(searchTransactionDetailsData) {
-            const YYYY = new Date().getFullYear();
-            const MM = (new Date().getMonth() + 1).toString().padStart(2, '0');
-            const dd = new Date().getDate();
             this.today = YYYY + '-' + MM + '-' + dd;
             // console.log(this.today);
             const getTransactionApi = `${Api}/transaction`;
@@ -256,6 +234,11 @@ const app = Vue.createApp({
                 XLSX.write(wb, { bookType: type, bookSST: true, type: 'base64' }) :
                 XLSX.writeFile(wb, fn || ('交易明細報表.' + (type || 'xlsx')));
         },
+        // 交易統計 - 預設當日區間
+        istodayTransactionStatistic(){
+            this.searchTransactionStatisticsData.startTime  = YYYY + '-' + MM + '-' + dd;
+            this.searchTransactionStatisticsData.endTime  = YYYY + '-' + MM + '-' + dd;
+        },
         // 交易統計 - 搜尋
         searchTransactionStatistic(searchTransactionStatisticsData) {
             const searchTransactionStatisticApi = `${Api}/statistic`;
@@ -279,8 +262,6 @@ const app = Vue.createApp({
                     alert("請選擇日期")
                 }
             }
-            
-
         },
         // 交易統計 - 匯出報表
         transactionStatisticTabletoExcel(type, fn, dl) {
@@ -313,9 +294,13 @@ const app = Vue.createApp({
         }
     },
     mounted() {
+        this.thisMonthFlow(); // 時段流量預設當月
+        this.thisDateFlow(); //  時段流量預設當日
         // 交易明細 - 當天為電動車的資料
         this.isToday()
         this.checkIsElectric();
+        // 交易統計 - 預設當日區間
+        this.istodayTransactionStatistic();
         // 消費折抵 - 商家列表
         this.getWhos();
         // 即時現況
